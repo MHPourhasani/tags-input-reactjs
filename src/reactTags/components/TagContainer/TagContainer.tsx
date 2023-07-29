@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { TagContainerProps } from './TagContainer.interface';
 import { FilteredTagsType, ThemeType } from '../../interfaces/general';
 import SelectedTagsList from '../SelectedTagsList/SelectedTagsList';
