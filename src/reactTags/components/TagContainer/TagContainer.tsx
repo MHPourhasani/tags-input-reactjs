@@ -152,7 +152,7 @@ export default function TagContainer({
                 <div
                     id="tags"
                     onMouseDown={tagsMouseDown}
-                    className={`relative w-full h-14 flex flex-wrap items-center gap-2 mt-2 px-2.5 rounded-[0.625rem] border-zSecondary-100 border ${
+                    className={`relative w-full min-h-[3.5rem] h-fit flex flex-wrap items-center gap-2 mt-2 p-2.5 rounded-[0.625rem] border-zSecondary-100 border ${
                         userTheme === 'dark' ? 'bg-bg-dark' : 'bg-bg-light'
                     } ${tagsClassName}`}
                 >
