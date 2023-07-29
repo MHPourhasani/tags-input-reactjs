@@ -24,13 +24,17 @@ export default function TagContainer({
     selectedTagClassName,
     selectedTagCloseIconClass,
 }: TagContainerProps) {
-    const [userTheme] = useState<ThemeType>('light');
+    const [userTheme, setUserTheme] = useState<ThemeType>('light');
     const [inputValue, setInputValue] = useState('');
     const [filteredTags, setFilteredTags] = useState<FilteredTagsType>([]);
     const [showDropdown, setShowDropdown] = useState(false);
     const [listOfTags, setListOfTags] = useState<any>([]);
     const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
+     useEffect(() => {
+         setUserTheme(theme);
+     }, [theme]);
+    
     useEffect(() => {
         setListOfTags(categoriesTags);
     }, [categoriesTags]);
