@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { TagContainerProps } from './TagContainer.interface';
 import { FilteredTagsType, ThemeType } from '../../interfaces/general';
 import SelectedTagsList from '../SelectedTagsList/SelectedTagsList';
@@ -46,8 +46,10 @@ export default function TagContainer({
     }, [inputValue, listOfTags]);
 
     const inputChangeHandler = (e: any) => {
-        let value = e.target.value.trim();
-        setInputValue(value);
+        let value = e.target.value;
+        if (value.trim()) {
+            setInputValue(value);
+        }
     };
 
     const inputKeyDown = (e: any) => {
