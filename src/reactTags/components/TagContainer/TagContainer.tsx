@@ -47,7 +47,7 @@ export default function TagContainer({
 
     const inputChangeHandler = (e: any) => {
         let value = e.target.value;
-        if (value.trim()) {
+        if (value.trim() || value === '') {
             setInputValue(value);
         }
     };
