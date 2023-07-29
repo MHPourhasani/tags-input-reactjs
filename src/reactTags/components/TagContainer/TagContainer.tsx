@@ -152,7 +152,7 @@ export default function TagContainer({
                 <div
                     id="tags"
                     onMouseDown={tagsMouseDown}
-                    className={`relative w-full min-h-[3.5rem] h-fit flex flex-wrap items-center gap-2 mt-2 p-2.5 rounded-[0.625rem] border-zSecondary-100 border ${
+                    className={`relative w-full min-h-[3.5rem] h-fit flex flex-wrap items-center gap-2 mt-2 p-2.5 pl-6 rounded-[0.625rem] border-zSecondary-100 border ${
                         userTheme === 'dark' ? 'bg-bg-dark' : 'bg-bg-light'
                     } ${tagsClassName}`}
                 >
@@ -179,13 +179,13 @@ export default function TagContainer({
 
                     {mode === 'advanced-multi-select' && (
                         <span
-                            className={`absolute left-3 rounded-full transition-all ease-in-out ${
+                            className={`absolute top-4 left-3 rounded-full transition-all ease-in-out ${
                                 theme === 'dark' ? 'hover:bg-zGray-800' : 'hover:bg-zGray-300'
                             }`}
                         >
                             <CloseIcon
                                 onClick={clickHandler}
-                                className={`w-4 h-auto rotate-45 cursor-pointer ${theme === 'dark' ? 'stroke-white' : 'stroke-zGray-800'}`}
+                                className={`w-5 h-auto rotate-45 cursor-pointer ${theme === 'dark' ? 'stroke-white' : 'stroke-zGray-800'}`}
                             />
                         </span>
                     )}
