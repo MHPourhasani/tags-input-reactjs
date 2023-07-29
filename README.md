@@ -78,27 +78,25 @@ import 'tags-input-reactjs/styles.css';
 ```
 
 ```jsx
+import { useState } from 'react';
 import { ReactTags } from "tags-input-reactjs";
 
 const App = () => {
+	const [tags, setTags] = useState(['apple', 'orange', 'banana']);
+	const [categoriesTags, setCategoriesTags] = useState(['apple', 'orange', 'banana', 'kiwi', 'grape']);
+
 	return (
 		<div>
 			<ReactTags
-				mode='array-of-string',
-    			theme = 'light',
-				maxTags={5},
-				selectedTags,
-				setSelectedTags,
-				categoriesTags,
-				title = 'تگ',
-				inputPlaceholder = 'آیتم‌ها را با Enter از هم جدا کنید.',
-				inputClassName,
-				addToCategoryOnClick,
-				dropDownContainerClassName,
-				tagsContainerClassName,
-				tagsClassName,
-				selectedTagClassName,
-				selectedTagCloseIconClass,
+				mode='array-of-string'
+    			theme = 'light'
+				maxTags={5}
+				selectedTags={tags}
+				setSelectedTags={setTags}
+				categoriesTags={categoriesTags}
+				title = 'تگ'
+				inputPlaceholder = 'آیتم‌ها را با Enter از هم جدا کنید.'
+				addToCategoryOnClick={(value) => setAbc([...abc, value])}
 			/>
 		</div>
 	);
