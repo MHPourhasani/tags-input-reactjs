@@ -38,12 +38,11 @@ yarn add tags-input-reactjs
 // In _app.tsx file in Nextjs project added this
 import 'tags-input-reactjs/styles.css';
 
-// Add this in the component you want to use
-import { DatePickerContainer, MobileDatePickerContainer } from 'tags-input-reactjs';
-import 'tags-input-reactjs/styles.css';
+// Add this in the component you want to use in Nextjs
+import { ReactTags } from 'tags-input-reactjs';
 
-// In App.jsx or App.tsx file in Vite React project added this
-import { DatePickerContainer, MobileDatePickerContainer } from 'tags-input-reactjs';
+// In App.jsx or App.tsx file in Vite React or create-react-app projects added this
+import { ReactTags } from 'tags-input-reactjs';
 import 'tags-input-reactjs/styles.css';
 ```
 
@@ -56,7 +55,7 @@ const App = () => {
 
     return (
         <div>
-            <ReactTags mode="array-of-string" selectedTags={tags} setSelectedTags={setTags} />
+            <ReactTags mode='array-of-string' selectedTags={tags} setSelectedTags={setTags} />
         </div>
     );
 };
@@ -79,7 +78,7 @@ import 'tags-input-reactjs/styles.css';
 
 ```jsx
 import { useState } from 'react';
-import { ReactTags } from "tags-input-reactjs";
+import { ReactTags } from 'tags-input-reactjs';
 
 const App = () => {
 	const [tags, setTags] = useState(['apple', 'orange', 'banana']);
