@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { TagContainerProps } from './TagContainer.interface';
 import { FilteredTagsType, ThemeType } from '../../interfaces/general';
 import SelectedTagsList from '../SelectedTagsList/SelectedTagsList';
-import Input from '../Input/Input';
 import Dropdown from '../Dropdown/Dropdown';
 import EmptyList from '../EmptyList/EmptyList';
 import CloseIcon from '../../assets/icons/closeIcon';
@@ -11,12 +10,12 @@ export default function TagContainer({
     mode,
     theme = 'light',
     maxTags,
-    selectedTags,
-    setSelectedTags,
-    categoriesTags,
+    defaultSelectedTags,
+    onChange,
     title = 'تگ',
     inputPlaceholder = 'آیتم‌ها را با Enter از هم جدا کنید.',
     inputClassName,
+    categoriesTags,
     addToCategoryOnClick,
     dropDownContainerClassName,
     tagsContainerClassName,
@@ -26,17 +25,29 @@ export default function TagContainer({
 }: TagContainerProps) {
     const [userTheme, setUserTheme] = useState<ThemeType>('light');
     const [inputValue, setInputValue] = useState('');
+    const [selectedTags, setSelectedTags] = useState<string[]>([]);
     const [filteredTags, setFilteredTags] = useState<FilteredTagsType>([]);
     const [showDropdown, setShowDropdown] = useState(false);
     const [listOfTags, setListOfTags] = useState<any>([]);
     const [activeIndex, setActiveIndex] = useState<number | null>(null);
+    const [resolveStatus, setResolveStatus] = useState(false);
 
-     useEffect(() => {
-         setUserTheme(theme);
-     }, [theme]);
-    
     useEffect(() => {
-        setListOfTags(categoriesTags);
+        if (theme) {
+            setUserTheme(theme);
+        }
+    }, [theme]);
+
+    useEffect(() => {
+        if (defaultSelectedTags) {
+            setSelectedTags(defaultSelectedTags);
+        }
+    }, [defaultSelectedTags]);
+
+    useEffect(() => {
+        if (categoriesTags) {
+            setListOfTags(categoriesTags);
+        }
     }, [categoriesTags]);
 
     useEffect(() => {
@@ -64,6 +75,7 @@ export default function TagContainer({
             ) {
                 if (filteredTags.find((i) => i === e.target.value)) {
                     setSelectedTags([...new Set([...selectedTags, e.target.value.trim()].slice(0, maxTags))]);
+                    onChange?.([...new Set([...selectedTags, e.target.value.trim()].slice(0, maxTags))]);
                 }
             } else {
                 if (mode === 'advanced-multi-select' && maxTags && selectedTags.length < maxTags) {
@@ -72,6 +84,7 @@ export default function TagContainer({
                 }
 
                 setSelectedTags([...new Set([...selectedTags, e.target.value.trim()].slice(0, maxTags))]);
+                // onChange?.([...new Set([...selectedTags, e.target.value.trim()].slice(0, maxTags))]);
             }
 
             setInputValue('');
@@ -79,7 +92,9 @@ export default function TagContainer({
 
         if (e.key === 'Enter') {
             if (activeIndex !== null) {
+                // addToCategory(filteredTags[activeIndex].slice(0, maxTags));
                 setSelectedTags([...new Set([...selectedTags, filteredTags[activeIndex]].slice(0, maxTags))]);
+                onChange?.([...new Set([...selectedTags, filteredTags[activeIndex]].slice(0, maxTags))]);
                 setInputValue('');
                 setActiveIndex(null);
             }
@@ -90,6 +105,7 @@ export default function TagContainer({
                 const tags = [...selectedTags];
                 tags.pop();
                 setSelectedTags(tags);
+                onChange?.(tags);
             }
             setActiveIndex(null);
         }
@@ -118,9 +134,13 @@ export default function TagContainer({
     const clickHandler = () => {
         if (inputValue.trim()) {
             setSelectedTags([...new Set([...selectedTags, inputValue].slice(0, maxTags))]);
+            onChange?.([...new Set([...selectedTags, inputValue].slice(0, maxTags))]);
+            // addToCategory(inputValue);
             setListOfTags([...listOfTags, inputValue]);
         }
-        setInputValue('');
+        if (resolveStatus) {
+            setInputValue('');
+        }
     };
 
     const tagsMouseDown = (e: any) => {
@@ -138,6 +158,7 @@ export default function TagContainer({
     const selectedTagsProps = {
         selectedTags: selectedTags,
         setSelectedTags: setSelectedTags,
+        onChange: onChange,
     };
 
     const globalProps = {
@@ -145,45 +166,68 @@ export default function TagContainer({
         mode: mode,
     };
 
+    // const resolveTrue = (value: string) => {
+    //     addToCategoryOnClick?.(value);
+    //     setSelectedTags([...new Set([...selectedTags, value].slice(0, maxTags))]);
+    //     onChange?.([...new Set([...selectedTags, value].slice(0, maxTags))]);
+    // };
+
+    // const addToCategory = async (value: string) => {
+    //     await new Promise((resolve) => {
+    //         if (value) {
+    //             resolve(true);
+    //             setResolveStatus(true);
+    //             // addToCategoryOnClick?.(value);
+    //             // setListOfTags([...listOfTags, value]);
+    //         }
+    //     }).then(resolveTrue(value));
+    // };
+
+    // useEffect(() => {
+    //     if (defaultSelectedTags) {
+    //         onChange?.(defaultSelectedTags);
+    //     }
+    // }, [defaultSelectedTags]);
+
+    // useEffect(() => {
+    //     console.log(selectedTags);
+    // }, [selectedTags]);
+
     return (
         <section dir="rtl" id="tagsContainer" className={`w-full flex flex-col items-center font-iranyekan ${tagsContainerClassName}`}>
             <section className={`relative w-full`}>
                 <label className={`text-sm ${userTheme === 'dark' ? 'text-zSecondary-10' : 'text-zGray-800'}`}>{`${title}`}</label>
-                <label
-                    className={`text-sm mr-1 ${userTheme === 'dark' ? 'text-zSecondary-400' : 'text-zSecondary-400'}`}
-                >{`(حداکثر ${maxTags} مورد)`}</label>
+
+                {maxTags && (
+                    <label
+                        className={`text-sm mr-1 ${userTheme === 'dark' ? 'text-zSecondary-400' : 'text-zSecondary-400'}`}
+                    >{`(حداکثر ${maxTags} مورد)`}</label>
+                )}
 
                 <div
                     id="tags"
                     onMouseDown={tagsMouseDown}
-                    className={`relative w-full min-h-[3.5rem] h-fit flex flex-wrap items-center gap-2 mt-2 p-2.5 pl-6 rounded-[0.625rem] border-zSecondary-100 border ${
+                    className={`relative w-full max-w-full min-h-[3.5rem] h-fit flex items-start gap-2 mt-2 p-2.5 rounded-[0.625rem] border-zSecondary-100 border ${
                         userTheme === 'dark' ? 'bg-bg-dark' : 'bg-bg-light'
                     } ${tagsClassName}`}
                 >
-                    {!!selectedTags.length && (
-                        <SelectedTagsList
-                            {...globalProps}
-                            {...selectedTagsProps}
-                            maxTags={maxTags}
-                            selectedTagClassName={selectedTagClassName}
-                            selectedTagCloseIconClass={selectedTagCloseIconClass}
-                        />
-                    )}
-
-                    <Input
-                        placeholder={inputPlaceholder}
-                        value={inputValue}
-                        changeHandler={inputChangeHandler}
-                        keyDown={inputKeyDown}
+                    <SelectedTagsList
+                        {...globalProps}
+                        {...selectedTagsProps}
+                        maxTags={maxTags}
+                        selectedTagClassName={selectedTagClassName}
+                        selectedTagCloseIconClass={selectedTagCloseIconClass}
+                        inputPlaceholder={inputPlaceholder}
+                        inputValue={inputValue}
+                        inputChangeHandler={inputChangeHandler}
+                        inputKeyDown={inputKeyDown}
                         setShowDropdown={setShowDropdown}
-                        theme={theme}
                         inputClassName={inputClassName}
-                        selectedTags={selectedTags}
                     />
 
                     {mode === 'advanced-multi-select' && (
                         <span
-                            className={`absolute top-4 left-3 rounded-full transition-all ease-in-out ${
+                            className={`mt-1.5 rounded-full transition-all ease-in-out ${
                                 theme === 'dark' ? 'hover:bg-zGray-800' : 'hover:bg-zGray-300'
                             }`}
                         >
@@ -197,11 +241,15 @@ export default function TagContainer({
             </section>
 
             <span id="dropdown-container" className="relative w-full z-50">
-                {showDropdown && mode === 'advanced-multi-select' && !filteredTags.length && !filteredTags.find((item) => item === inputValue) && (
-                    <div className="absolute w-full">
-                        <EmptyList {...globalProps} inputValue={inputValue} clickHandler={clickHandler} />
-                    </div>
-                )}
+                {showDropdown &&
+                    mode === 'advanced-multi-select' &&
+                    inputValue &&
+                    !filteredTags.length &&
+                    !filteredTags.find((item) => item === inputValue) && (
+                        <div className="absolute w-full">
+                            <EmptyList {...globalProps} inputValue={inputValue} clickHandler={clickHandler} />
+                        </div>
+                    )}
 
                 {showDropdown && mode !== 'array-of-string' && !!filteredTags.length && (
                     <div className="absolute w-full">
