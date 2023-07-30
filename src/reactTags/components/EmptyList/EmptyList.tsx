@@ -12,7 +12,7 @@ const EmptyList = ({ theme, clickHandler, inputValue }: EmptyListProps) => {
                     }`}
                 >
                     <span>افزودن</span>
-                    <span>"{inputValue}"</span>
+                    <span className="truncate">"{inputValue}"</span>
                 </button>
             </div>
         </div>
