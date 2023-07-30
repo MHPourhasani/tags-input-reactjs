@@ -14,5 +14,5 @@ export interface SelectedTagsListProps {
     inputChangeHandler: any;
     inputKeyDown: any;
     setShowDropdown: any;
-    inputClassName: string;
+    inputClassName?: string;
 }
