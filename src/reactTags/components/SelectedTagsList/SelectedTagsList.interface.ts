@@ -6,6 +6,13 @@ export interface SelectedTagsListProps {
     maxTags?: number;
     selectedTags: string[];
     setSelectedTags: any;
+    onChange: any;
     selectedTagClassName?: string;
     selectedTagCloseIconClass?: string;
+    inputPlaceholder: string;
+    inputValue: string;
+    inputChangeHandler: any;
+    inputKeyDown: any;
+    setShowDropdown: any;
+    inputClassName: string;
 }
