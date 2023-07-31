@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import CloseIcon from '../../assets/icons/closeIcon';
 import { SelectedTagsListProps } from './SelectedTagsList.interface';
 import Input from '../Input/Input';
-import { useOutsideClick } from '@/hooks/useOutsideClick';
+import { useOutsideClick } from '../../hooks/useOutsideClick';
 
 const SelectedTagsList = ({
     theme,
