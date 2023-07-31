@@ -16,6 +16,7 @@ const Dropdown = ({
     clickHandler,
     activeIndex,
     setShowDropdown,
+    resolveStatus,
 }: DropdownProps) => {
     const handleClickOutside = () => {
         setShowDropdown(false);
@@ -35,7 +36,7 @@ const Dropdown = ({
             className={`bg-white w-full h-auto overflow-y-auto max-h-64 flex flex-col gap-1 pt-0 border rounded-xl custom-scrollbar ${dropDownContainerClassName}`}
         >
             {mode === 'advanced-multi-select' && filteredTags && inputValue.trim() && !filteredTags.find((tag: string) => tag === inputValue) && (
-                <EmptyList inputValue={inputValue} clickHandler={clickHandler} theme={theme} mode={mode} />
+                <EmptyList inputValue={inputValue} clickHandler={clickHandler} theme={theme} resolveStatus={resolveStatus} />
             )}
 
             {filteredTags.map((item: string) => (

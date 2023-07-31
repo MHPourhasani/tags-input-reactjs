@@ -13,4 +13,5 @@ export interface DropdownProps {
     activeIndex?: number | null;
     clickHandler: () => void;
     setShowDropdown?: any;
+    resolveStatus: boolean | undefined;
 }

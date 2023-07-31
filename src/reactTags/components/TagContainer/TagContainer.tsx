@@ -243,7 +243,7 @@ export default function TagContainer({
                     !filteredTags.length &&
                     !filteredTags.find((item) => item === inputValue) && (
                         <div className="absolute w-full">
-                            <EmptyList {...globalProps} inputValue={inputValue} clickHandler={clickHandler} resolveStatus={resolveStatus} />
+                            <EmptyList theme={theme} inputValue={inputValue} clickHandler={clickHandler} resolveStatus={resolveStatus} />
                         </div>
                     )}
 
@@ -260,6 +260,7 @@ export default function TagContainer({
                             clickHandler={clickHandler}
                             activeIndex={activeIndex}
                             setShowDropdown={setShowDropdown}
+                            resolveStatus={resolveStatus}
                         />
                     </div>
                 )}
