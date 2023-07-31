@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { TagContainerProps } from './TagContainer.interface';
 import { FilteredTagsType, ThemeType } from '../../interfaces/general';
 import SelectedTagsList from '../SelectedTagsList/SelectedTagsList';
@@ -51,6 +51,13 @@ export default function TagContainer({
     }, [categoriesTags]);
 
     useEffect(() => {
+        if (addToCategoryOnClick) {
+            setResolveStatus(addToCategoryOnClick);
+        }
+    }, [addToCategoryOnClick]);
+    console.log(resolveStatus);
+
+    useEffect(() => {
         if (listOfTags) {
             setFilteredTags(
                 listOfTags
@@ -68,23 +75,31 @@ export default function TagContainer({
     };
 
     const inputKeyDown = (e: any) => {
+        const value = e.target.value;
         if (e.key === 'Enter' && inputValue && activeIndex === null) {
             if (
                 mode === 'multi-select' &&
-                selectedTags.filter((item: string) => Object.values(item).join('').toLowerCase().includes(e.target.value.toLowerCase()))
+                selectedTags.filter((item: string) => Object.values(item).join('').toLowerCase().includes(value.toLowerCase()))
             ) {
-                if (filteredTags.find((i) => i === e.target.value)) {
-                    setSelectedTags([...new Set([...selectedTags, e.target.value.trim()].slice(0, maxTags))]);
-                    onChange?.([...new Set([...selectedTags, e.target.value.trim()].slice(0, maxTags))]);
+                if (filteredTags.find((i) => i === value)) {
+                    setSelectedTags([...new Set([...selectedTags, value.trim()].slice(0, maxTags))]);
+                    onChange?.([...new Set([...selectedTags, value.trim()].slice(0, maxTags))]);
                 }
             } else {
                 if (mode === 'advanced-multi-select' && maxTags && selectedTags.length < maxTags) {
-                    addToCategoryOnClick?.(e.target.value.trim());
-                    setListOfTags([...listOfTags, e.target.value.trim()]);
+                    // addToCategory(value.trim());
+                    if (addToCategoryOnClick && addToCategoryOnClick(value.trim())) {
+                        addToCategoryOnClick?.(value.trim());
+                        setListOfTags([...listOfTags, value.trim()]);
+                        setSelectedTags([...new Set([...selectedTags, value.trim()].slice(0, maxTags))]);
+                        onChange?.([...new Set([...selectedTags, value.trim()].slice(0, maxTags))]);
+                    }
                 }
 
-                setSelectedTags([...new Set([...selectedTags, e.target.value.trim()].slice(0, maxTags))]);
-                // onChange?.([...new Set([...selectedTags, e.target.value.trim()].slice(0, maxTags))]);
+                if (mode === 'array-of-string') {
+                    onChange?.([...new Set([...selectedTags, value.trim()].slice(0, maxTags))]);
+                    setSelectedTags([...new Set([...selectedTags, value.trim()].slice(0, maxTags))]);
+                }
             }
 
             setInputValue('');
@@ -94,10 +109,10 @@ export default function TagContainer({
             if (activeIndex !== null) {
                 // addToCategory(filteredTags[activeIndex].slice(0, maxTags));
                 setSelectedTags([...new Set([...selectedTags, filteredTags[activeIndex]].slice(0, maxTags))]);
-                onChange?.([...new Set([...selectedTags, filteredTags[activeIndex]].slice(0, maxTags))]);
-                setInputValue('');
+                // onCange?.([...new Set([...selectedTags, filteredTags[activeIndex]].slice(0, maxTags))]);
                 setActiveIndex(null);
             }
+            setInputValue('');
         }
 
         if (e.key === 'Backspace') {
@@ -138,7 +153,7 @@ export default function TagContainer({
             // addToCategory(inputValue);
             setListOfTags([...listOfTags, inputValue]);
         }
-        if (resolveStatus) {
+        if (resolveStatus !== undefined) {
             setInputValue('');
         }
     };
@@ -165,33 +180,6 @@ export default function TagContainer({
         theme: userTheme,
         mode: mode,
     };
-
-    // const resolveTrue = (value: string) => {
-    //     addToCategoryOnClick?.(value);
-    //     setSelectedTags([...new Set([...selectedTags, value].slice(0, maxTags))]);
-    //     onChange?.([...new Set([...selectedTags, value].slice(0, maxTags))]);
-    // };
-
-    // const addToCategory = async (value: string) => {
-    //     await new Promise((resolve) => {
-    //         if (value) {
-    //             resolve(true);
-    //             setResolveStatus(true);
-    //             // addToCategoryOnClick?.(value);
-    //             // setListOfTags([...listOfTags, value]);
-    //         }
-    //     }).then(resolveTrue(value));
-    // };
-
-    // useEffect(() => {
-    //     if (defaultSelectedTags) {
-    //         onChange?.(defaultSelectedTags);
-    //     }
-    // }, [defaultSelectedTags]);
-
-    // useEffect(() => {
-    //     console.log(selectedTags);
-    // }, [selectedTags]);
 
     return (
         <section dir="rtl" id="tagsContainer" className={`w-full flex flex-col items-center font-iranyekan ${tagsContainerClassName}`}>
@@ -223,18 +211,26 @@ export default function TagContainer({
                         inputKeyDown={inputKeyDown}
                         setShowDropdown={setShowDropdown}
                         inputClassName={inputClassName}
+                        resolveStatus={resolveStatus}
                     />
 
                     {mode === 'advanced-multi-select' && (
                         <span
-                            className={`mt-1.5 rounded-full transition-all ease-in-out ${
+                            className={`w-fit mt-1.5 rounded-full transition-all ease-in-out ${
                                 theme === 'dark' ? 'hover:bg-zGray-800' : 'hover:bg-zGray-300'
                             }`}
                         >
-                            <CloseIcon
-                                onClick={clickHandler}
-                                className={`w-5 h-auto rotate-45 cursor-pointer ${theme === 'dark' ? 'stroke-white' : 'stroke-zGray-800'}`}
-                            />
+                            {resolveStatus === undefined ? (
+                                <span className="flex items-center gap-2 w-36">
+                                    <span className="w-6 h-6 animate-spin border-2 border-dashed rounded-full mr-5" />
+                                    <div className="text-xs">در حال افزودن</div>
+                                </span>
+                            ) : (
+                                <CloseIcon
+                                    onClick={clickHandler}
+                                    className={`w-5 h-auto rotate-45 cursor-pointer ${theme === 'dark' ? 'stroke-white' : 'stroke-zGray-800'}`}
+                                />
+                            )}
                         </span>
                     )}
                 </div>
@@ -247,7 +243,7 @@ export default function TagContainer({
                     !filteredTags.length &&
                     !filteredTags.find((item) => item === inputValue) && (
                         <div className="absolute w-full">
-                            <EmptyList {...globalProps} inputValue={inputValue} clickHandler={clickHandler} />
+                            <EmptyList {...globalProps} inputValue={inputValue} clickHandler={clickHandler} resolveStatus={resolveStatus} />
                         </div>
                     )}
 

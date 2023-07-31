@@ -3,10 +3,10 @@ import { ModeType, ThemeType } from '../../interfaces/general';
 export interface TagContainerProps {
     mode: ModeType;
     theme?: ThemeType;
-    title?: string;
+    title: string;
     maxTags?: number;
-    selectedTags: string[];
-    setSelectedTags: any;
+    defaultSelectedTags: string[];
+    onChange?: (tags: string[]) => void;
     categoriesTags?: string[];
     inputPlaceholder?: string;
     inputClassName?: string;
@@ -15,5 +15,5 @@ export interface TagContainerProps {
     tagsClassName?: string;
     selectedTagClassName?: string;
     selectedTagCloseIconClass?: string;
-    addToCategoryOnClick?: (a: any) => any;
+    addToCategoryOnClick?: (a?: any) => any;
 }
