@@ -15,4 +15,5 @@ export interface SelectedTagsListProps {
     inputKeyDown: any;
     setShowDropdown: any;
     inputClassName?: string;
+    resolveStatus: boolean | undefined;
 }
