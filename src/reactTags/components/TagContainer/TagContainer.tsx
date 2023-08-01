@@ -44,7 +44,7 @@ export default function TagContainer({
             if (maxTags) {
                 setSelectedTags([...new Set(defaultSelectedTags.slice(0, maxTags))]);
             } else {
-                setSelectedTags([...new Set(defaultSelectedTags.slice(0))]);
+                setSelectedTags([...new Set(defaultSelectedTags)]);
             }
         }
     }, [defaultSelectedTags, maxTags]);
@@ -92,25 +92,33 @@ export default function TagContainer({
                 }
             } else {
                 if (addToCategoryOnClick && mode === 'advanced-multi-select') {
-                    setIsLoading(true);
-                    await addToCategoryOnClick(value.trim());
-                    setIsLoading(false);
-
-                    if (listOfTags.filter((tag: string) => tag !== value.trim())) {
+                    // if (listOfTags.filter((tag: string) => tag !== value.trim())) {
+                    if (maxTags && selectedTags.length < maxTags) {
+                        setIsLoading(true);
+                        await addToCategoryOnClick(value.trim());
+                        setIsLoading(false);
+                        setSelectedTags([...new Set([...selectedTags, value.trim()].slice(0, maxTags))]);
+                        onChange?.([...new Set([...selectedTags, value.trim()].slice(0, maxTags))]);
                         setListOfTags([...listOfTags, value.trim()]);
-                        if (maxTags && selectedTags.length < maxTags) {
-                            setSelectedTags([...new Set([...selectedTags, value.trim()].slice(0, maxTags))]);
-                            onChange?.([...new Set([...selectedTags, value.trim()].slice(0, maxTags))]);
-                        } else {
-                            setSelectedTags([...new Set([...selectedTags, value.trim()])]);
-                            onChange?.([...new Set([...selectedTags, value.trim()])]);
-                        }
+                    } else {
+                        setIsLoading(true);
+                        await addToCategoryOnClick(value.trim());
+                        setIsLoading(false);
+                        setSelectedTags([...new Set([...selectedTags, value.trim()])]);
+                        onChange?.([...new Set([...selectedTags, value.trim()])]);
+                        setListOfTags([...listOfTags, value.trim()]);
                     }
+                    // }
                 }
 
                 if (mode === 'array-of-string') {
-                    onChange?.([...new Set([...selectedTags, value.trim()].slice(0, maxTags))]);
-                    setSelectedTags([...new Set([...selectedTags, value.trim()].slice(0, maxTags))]);
+                    if (maxTags) {
+                        onChange?.([...new Set([...selectedTags, value.trim()].slice(0, maxTags))]);
+                        setSelectedTags([...new Set([...selectedTags, value.trim()].slice(0, maxTags))]);
+                    } else {
+                        onChange?.([...new Set([...selectedTags, value.trim()])]);
+                        setSelectedTags([...new Set([...selectedTags, value.trim()])]);
+                    }
                 }
             }
 
@@ -129,7 +137,6 @@ export default function TagContainer({
                 }
                 setActiveIndex(null);
             }
-            setInputFocus(true);
             setInputValue('');
         }
 
@@ -168,15 +175,24 @@ export default function TagContainer({
                 setIsLoading(true);
                 await addToCategoryOnClick(inputValue.trim());
                 setIsLoading(false);
-                setSelectedTags([...new Set([...selectedTags, inputValue].slice(0, maxTags))]);
+                if (maxTags) {
+                    setSelectedTags([...new Set([...selectedTags, inputValue].slice(0, maxTags))]);
+                } else {
+                    setSelectedTags([...new Set([...selectedTags, inputValue])]);
+                }
                 setListOfTags([...listOfTags, inputValue.trim()]);
             } else {
-                setSelectedTags([...new Set([...selectedTags, inputValue].slice(0, maxTags))]);
+                if (maxTags) {
+                    setSelectedTags([...new Set([...selectedTags, inputValue].slice(0, maxTags))]);
+                } else {
+                    setSelectedTags([...new Set([...selectedTags, inputValue])]);
+                }
             }
             onChange?.([...new Set([...selectedTags, inputValue].slice(0, maxTags))]);
         }
-
-        setInputFocus(true);
+        if (!isLoading) {
+            setInputFocus(true);
+        }
         setInputValue('');
     };
 
