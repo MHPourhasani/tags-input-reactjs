@@ -6,4 +6,5 @@ export interface EmptyListProps {
     clickHandler: () => void;
     inputValue: string;
     isLoading: boolean;
+    emptyListClassName?: string;
 }
