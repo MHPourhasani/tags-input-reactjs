@@ -10,5 +10,6 @@ export interface InputProps {
     theme?: ThemeType;
     inputClassName?: string;
     selectedTags: string[];
-    resolveStatus: boolean | undefined;
+    isLoading: boolean;
+    inputFocus: boolean;
 }
