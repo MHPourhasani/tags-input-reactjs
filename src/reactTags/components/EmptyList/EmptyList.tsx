@@ -6,12 +6,12 @@ const EmptyList = ({ theme, clickHandler, inputValue, isLoading }: EmptyListProp
         <button
             onClick={clickHandler}
             disabled={isLoading}
-            className={`w-full flex gap-2 bg-white cursor-pointer rounded-lg px-2 py-[7px] disabled:cursor-wait ${
-                theme === 'dark' ? 'text-white hover:bg-zGray-700' : 'text-zGray-800 hover:bg-zDark-12'
+            className={`w-full flex gap-2 cursor-pointer border border-zSecondary-400 rounded-lg px-2 py-[7px] disabled:cursor-wait ${
+                theme === 'dark' ? 'text-white bg-bg-dark hover:bg-zGray-700' : 'text-zGray-800 bg-bg-light hover:bg-zSecondary-300'
             }`}
         >
             <span>افزودن</span>
-            <span className="truncate">"{inputValue}"</span>
+            <span className="truncate">{`"${inputValue}"`}</span>
             {isLoading && (
                 <>
                     <span className="w-6 h-6 animate-spin border-2 border-dashed rounded-full mr-5" />
