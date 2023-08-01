@@ -1,8 +1,9 @@
-import { ThemeType } from "../../interfaces/general";
+import { ModeType, ThemeType } from '../../interfaces/general';
 
 export interface EmptyListProps {
     theme: ThemeType;
+    mode: ModeType;
     clickHandler: () => void;
     inputValue: string;
-    resolveStatus: boolean | undefined;
+    isLoading: boolean;
 }
