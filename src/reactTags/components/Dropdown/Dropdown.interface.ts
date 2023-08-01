@@ -7,11 +7,12 @@ export interface DropdownProps {
     filteredTags: string[];
     selectedTags: SelectedTagsType;
     setSelectedTags: any;
+    onChange: any;
     dropDownContainerClassName?: string;
     inputValue: string;
     setInputValue: any;
     activeIndex?: number | null;
     clickHandler: () => void;
     setShowDropdown?: any;
-    resolveStatus: boolean | undefined;
+    isLoading: boolean;
 }

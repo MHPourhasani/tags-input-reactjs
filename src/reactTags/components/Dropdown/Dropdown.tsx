@@ -10,13 +10,14 @@ const Dropdown = ({
     maxTags,
     selectedTags,
     setSelectedTags,
+    onChange,
     dropDownContainerClassName,
     inputValue,
     setInputValue,
     clickHandler,
     activeIndex,
     setShowDropdown,
-    resolveStatus,
+    isLoading,
 }: DropdownProps) => {
     const handleClickOutside = () => {
         setShowDropdown(false);
@@ -33,10 +34,12 @@ const Dropdown = ({
             id="dropDown"
             ref={ref}
             onClick={dropDownOnClick}
-            className={`bg-white w-full h-auto overflow-y-auto max-h-64 flex flex-col gap-1 pt-0 border rounded-xl custom-scrollbar ${dropDownContainerClassName}`}
+            className={`w-full h-auto max-h-72 flex flex-col gap-1 border rounded-xl custom-scrollbar overflow-y-auto ${
+                theme === 'dark' ? 'bg-bg-dark' : 'bg-bg-light'
+            } ${dropDownContainerClassName}`}
         >
             {mode === 'advanced-multi-select' && filteredTags && inputValue.trim() && !filteredTags.find((tag: string) => tag === inputValue) && (
-                <EmptyList inputValue={inputValue} clickHandler={clickHandler} theme={theme} resolveStatus={resolveStatus} />
+                <EmptyList inputValue={inputValue} clickHandler={clickHandler} theme={theme} mode={mode} isLoading={isLoading} />
             )}
 
             {filteredTags.map((item: string) => (
@@ -44,9 +47,10 @@ const Dropdown = ({
                     key={item}
                     onClick={() => {
                         setSelectedTags([...new Set([...selectedTags, item].slice(0, maxTags))]);
+                        onChange?.([...new Set([...selectedTags, item].slice(0, maxTags))]);
                         setInputValue('');
                     }}
-                    className={`cursor-pointer rounded-lg py-2 px-4 ${
+                    className={`truncate cursor-pointer rounded-lg h-10 px-4 overflow-y-auto ${
                         theme === 'dark' ? 'text-white hover:bg-zGray-700' : 'text-zGray-800 hover:bg-zSecondary-300'
                     } ${filteredTags.indexOf(item) === activeIndex && 'bg-zSecondary-300'} ${
                         filteredTags.find((tag: string) => tag === selectedTags[selectedTags.indexOf(item)]) && 'text-zSecondary-400 cursor-text'
