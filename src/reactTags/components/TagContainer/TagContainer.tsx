@@ -5,6 +5,7 @@ import SelectedTagsList from '../SelectedTagsList/SelectedTagsList';
 import Dropdown from '../Dropdown/Dropdown';
 import EmptyList from '../EmptyList/EmptyList';
 import CloseIcon from '../../assets/icons/closeIcon';
+import AddingLoading from '../AddingLoading/AddingLoading';
 
 export default function TagContainer({
     mode,
@@ -65,6 +66,18 @@ export default function TagContainer({
         }
     }, [inputValue, listOfTags]);
 
+    useEffect(() => {
+        if (maxTags && selectedTags.length === maxTags) {
+            setInputFocus(false);
+        }
+    }, [selectedTags, maxTags]);
+
+    useEffect(() => {
+        if (inputFocus) {
+            setShowDropdown(true);
+        }
+    }, [inputFocus]);
+
     const inputChangeHandler = (e: any) => {
         let value = e.target.value;
         if (value.trim() || value === '') {
@@ -97,6 +110,7 @@ export default function TagContainer({
                             setIsLoading(true);
                             await addToCategoryOnClick(value.trim());
                             setIsLoading(false);
+
                             setSelectedTags([...new Set([...selectedTags, value.trim()].slice(0, maxTags))]);
                             onChange?.([...new Set([...selectedTags, value.trim()].slice(0, maxTags))]);
                         }
@@ -119,7 +133,6 @@ export default function TagContainer({
                     }
                 }
             }
-            setInputFocus(true);
             setInputValue('');
         }
 
@@ -192,7 +205,6 @@ export default function TagContainer({
             onChange?.([...new Set([...selectedTags, inputValue].slice(0, maxTags))]);
         }
 
-        setInputFocus(true);
         setInputValue('');
     };
 
@@ -207,12 +219,6 @@ export default function TagContainer({
             setActiveIndex(null);
         }
     }, [showDropdown]);
-
-    useEffect(() => {
-        if (selectedTags.length === maxTags) {
-            setInputFocus(false);
-        }
-    }, [selectedTags, maxTags]);
 
     const selectedTagsProps = {
         selectedTags: selectedTags,
@@ -249,27 +255,24 @@ export default function TagContainer({
                         maxTags={maxTags}
                         selectedTagClassName={selectedTagClassName}
                         selectedTagCloseIconClass={selectedTagCloseIconClass}
+                        setShowDropdown={setShowDropdown}
                         inputPlaceholder={inputPlaceholder}
                         inputValue={inputValue}
                         inputChangeHandler={inputChangeHandler}
                         inputKeyDown={inputKeyDown}
-                        setShowDropdown={setShowDropdown}
                         inputClassName={inputClassName}
-                        isLoading={isLoading}
                         inputFocus={inputFocus}
+                        setInputFocus={setInputFocus}
                     />
 
                     {mode === 'advanced-multi-select' && (
                         <span className={`w-fit mt-1.5 rounded-full transition-all ease-in-out`}>
                             {isLoading ? (
-                                <span className="flex items-center gap-2 w-36">
-                                    <span className="w-6 h-6 animate-spin border-2 border-dashed rounded-full mr-5" />
-                                    <div className="text-xs">در حال افزودن</div>
-                                </span>
+                                <AddingLoading theme={userTheme} loadingText="در حال افزودن" />
                             ) : (
                                 <CloseIcon
                                     onClick={clickHandler}
-                                    className={`w-5 h-auto rotate-45 cursor-pointer ${theme === 'dark' ? 'stroke-white' : 'stroke-zGray-800'}`}
+                                    className={`w-5 h-auto rotate-45 cursor-pointer ${userTheme === 'dark' ? 'stroke-white' : 'stroke-zGray-800'}`}
                                 />
                             )}
                         </span>
@@ -289,7 +292,7 @@ export default function TagContainer({
                     )}
 
                 {showDropdown && mode !== 'array-of-string' && !!filteredTags.length && (
-                    <div className="absolute w-full">
+                    <div className="absolute w-full h-fit">
                         <Dropdown
                             {...globalProps}
                             {...selectedTagsProps}
