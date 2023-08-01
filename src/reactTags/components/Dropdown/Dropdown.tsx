@@ -1,7 +1,7 @@
 import React from 'react';
 import { DropdownProps } from './Dropdown.interface';
 import EmptyList from '../EmptyList/EmptyList';
-import { useOutsideClick } from '../../hooks/useOutsideClick';
+import { useOutsideClick } from '@/hooks/useOutsideClick';
 
 const Dropdown = ({
     theme,
@@ -34,7 +34,7 @@ const Dropdown = ({
             id="dropDown"
             ref={ref}
             onClick={dropDownOnClick}
-            className={`w-full h-auto max-h-72 flex flex-col gap-1 border rounded-xl custom-scrollbar overflow-y-auto ${
+            className={`w-full h-auto max-h-72 flex flex-col gap-1 border border-zSecondary-400 rounded-xl custom-scrollbar overflow-y-auto ${
                 theme === 'dark' ? 'bg-bg-dark' : 'bg-bg-light'
             } ${dropDownContainerClassName}`}
         >
@@ -46,11 +46,16 @@ const Dropdown = ({
                 <span
                     key={item}
                     onClick={() => {
-                        setSelectedTags([...new Set([...selectedTags, item].slice(0, maxTags))]);
-                        onChange?.([...new Set([...selectedTags, item].slice(0, maxTags))]);
+                        if (maxTags) {
+                            setSelectedTags([...new Set([...selectedTags, item].slice(0, maxTags))]);
+                            onChange?.([...new Set([...selectedTags, item].slice(0, maxTags))]);
+                        } else {
+                            setSelectedTags([...new Set([...selectedTags, item])]);
+                            onChange?.([...new Set([...selectedTags, item])]);
+                        }
                         setInputValue('');
                     }}
-                    className={`truncate cursor-pointer rounded-lg h-10 px-4 overflow-y-auto ${
+                    className={`truncate cursor-pointer rounded-lg h-10 px-4 ${
                         theme === 'dark' ? 'text-white hover:bg-zGray-700' : 'text-zGray-800 hover:bg-zSecondary-300'
                     } ${filteredTags.indexOf(item) === activeIndex && 'bg-zSecondary-300'} ${
                         filteredTags.find((tag: string) => tag === selectedTags[selectedTags.indexOf(item)]) && 'text-zSecondary-400 cursor-text'
