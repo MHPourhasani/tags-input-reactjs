@@ -92,23 +92,21 @@ export default function TagContainer({
                 }
             } else {
                 if (addToCategoryOnClick && mode === 'advanced-multi-select') {
-                    // if (listOfTags.filter((tag: string) => tag !== value.trim())) {
-                    if (maxTags && selectedTags.length < maxTags) {
-                        setIsLoading(true);
-                        await addToCategoryOnClick(value.trim());
-                        setIsLoading(false);
-                        setSelectedTags([...new Set([...selectedTags, value.trim()].slice(0, maxTags))]);
-                        onChange?.([...new Set([...selectedTags, value.trim()].slice(0, maxTags))]);
-                        setListOfTags([...listOfTags, value.trim()]);
+                    if (maxTags) {
+                        if (selectedTags.length < maxTags && listOfTags.find((tag: string) => tag !== value.trim())) {
+                            setIsLoading(true);
+                            await addToCategoryOnClick(value.trim());
+                            setIsLoading(false);
+                            setSelectedTags([...new Set([...selectedTags, value.trim()].slice(0, maxTags))]);
+                            onChange?.([...new Set([...selectedTags, value.trim()].slice(0, maxTags))]);
+                        }
                     } else {
                         setIsLoading(true);
                         await addToCategoryOnClick(value.trim());
                         setIsLoading(false);
                         setSelectedTags([...new Set([...selectedTags, value.trim()])]);
                         onChange?.([...new Set([...selectedTags, value.trim()])]);
-                        setListOfTags([...listOfTags, value.trim()]);
                     }
-                    // }
                 }
 
                 if (mode === 'array-of-string') {
@@ -121,9 +119,8 @@ export default function TagContainer({
                     }
                 }
             }
-
-            setInputValue('');
             setInputFocus(true);
+            setInputValue('');
         }
 
         if (e.key === 'Enter') {
@@ -138,6 +135,10 @@ export default function TagContainer({
                 setActiveIndex(null);
             }
             setInputValue('');
+        }
+
+        if (e.key !== 'Enter' && activeIndex !== null) {
+            setActiveIndex(null);
         }
 
         if (e.key === 'Backspace') {
@@ -170,8 +171,8 @@ export default function TagContainer({
     };
 
     const clickHandler = async () => {
-        if (addToCategoryOnClick && inputValue.trim()) {
-            if (mode === 'advanced-multi-select') {
+        if (inputValue.trim()) {
+            if (addToCategoryOnClick && mode === 'advanced-multi-select') {
                 setIsLoading(true);
                 await addToCategoryOnClick(inputValue.trim());
                 setIsLoading(false);
@@ -190,9 +191,8 @@ export default function TagContainer({
             }
             onChange?.([...new Set([...selectedTags, inputValue].slice(0, maxTags))]);
         }
-        if (!isLoading) {
-            setInputFocus(true);
-        }
+
+        setInputFocus(true);
         setInputValue('');
     };
 
@@ -207,6 +207,12 @@ export default function TagContainer({
             setActiveIndex(null);
         }
     }, [showDropdown]);
+
+    useEffect(() => {
+        if (selectedTags.length === maxTags) {
+            setInputFocus(false);
+        }
+    }, [selectedTags, maxTags]);
 
     const selectedTagsProps = {
         selectedTags: selectedTags,
@@ -283,7 +289,7 @@ export default function TagContainer({
                     )}
 
                 {showDropdown && mode !== 'array-of-string' && !!filteredTags.length && (
-                    <div className="absolute w-full h-auto">
+                    <div className="absolute w-full">
                         <Dropdown
                             {...globalProps}
                             {...selectedTagsProps}
