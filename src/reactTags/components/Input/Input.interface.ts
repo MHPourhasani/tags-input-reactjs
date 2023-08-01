@@ -6,10 +6,10 @@ export interface InputProps {
     value?: string;
     changeHandler?: (e: any) => void;
     keyDown?: (e: any) => void;
-    setShowDropdown?: any;
     theme?: ThemeType;
     inputClassName?: string;
     selectedTags: string[];
-    isLoading: boolean;
     inputFocus: boolean;
+    setInputFocus: any;
+    setShowDropdown: any;
 }
