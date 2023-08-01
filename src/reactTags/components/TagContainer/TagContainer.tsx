@@ -30,7 +30,8 @@ export default function TagContainer({
     const [showDropdown, setShowDropdown] = useState(false);
     const [listOfTags, setListOfTags] = useState<any>([]);
     const [activeIndex, setActiveIndex] = useState<number | null>(null);
-    const [resolveStatus, setResolveStatus] = useState(false);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [inputFocus, setInputFocus] = useState<boolean>(false);
 
     useEffect(() => {
         if (theme) {
@@ -40,22 +41,19 @@ export default function TagContainer({
 
     useEffect(() => {
         if (defaultSelectedTags) {
-            setSelectedTags(defaultSelectedTags);
+            if (maxTags) {
+                setSelectedTags([...new Set(defaultSelectedTags.slice(0, maxTags))]);
+            } else {
+                setSelectedTags([...new Set(defaultSelectedTags.slice(0))]);
+            }
         }
-    }, [defaultSelectedTags]);
+    }, [defaultSelectedTags, maxTags]);
 
     useEffect(() => {
         if (categoriesTags) {
             setListOfTags(categoriesTags);
         }
     }, [categoriesTags]);
-
-    useEffect(() => {
-        if (addToCategoryOnClick) {
-            setResolveStatus(addToCategoryOnClick);
-        }
-    }, [addToCategoryOnClick]);
-    console.log(resolveStatus);
 
     useEffect(() => {
         if (listOfTags) {
@@ -74,25 +72,39 @@ export default function TagContainer({
         }
     };
 
-    const inputKeyDown = (e: any) => {
+    const inputKeyDown = async (e: any) => {
         const value = e.target.value;
-        if (e.key === 'Enter' && inputValue && activeIndex === null) {
+        setInputValue(value.trim());
+
+        if (e.key === 'Enter' && value.trim() && activeIndex === null) {
             if (
                 mode === 'multi-select' &&
                 selectedTags.filter((item: string) => Object.values(item).join('').toLowerCase().includes(value.toLowerCase()))
             ) {
                 if (filteredTags.find((i) => i === value)) {
-                    setSelectedTags([...new Set([...selectedTags, value.trim()].slice(0, maxTags))]);
-                    onChange?.([...new Set([...selectedTags, value.trim()].slice(0, maxTags))]);
-                }
-            } else {
-                if (mode === 'advanced-multi-select' && maxTags && selectedTags.length < maxTags) {
-                    // addToCategory(value.trim());
-                    if (addToCategoryOnClick && addToCategoryOnClick(value.trim())) {
-                        addToCategoryOnClick?.(value.trim());
-                        setListOfTags([...listOfTags, value.trim()]);
+                    if (maxTags) {
                         setSelectedTags([...new Set([...selectedTags, value.trim()].slice(0, maxTags))]);
                         onChange?.([...new Set([...selectedTags, value.trim()].slice(0, maxTags))]);
+                    } else {
+                        setSelectedTags([...new Set([...selectedTags, value.trim()])]);
+                        onChange?.([...new Set([...selectedTags, value.trim()])]);
+                    }
+                }
+            } else {
+                if (addToCategoryOnClick && mode === 'advanced-multi-select') {
+                    setIsLoading(true);
+                    await addToCategoryOnClick(value.trim());
+                    setIsLoading(false);
+
+                    if (listOfTags.filter((tag: string) => tag !== value.trim())) {
+                        setListOfTags([...listOfTags, value.trim()]);
+                        if (maxTags && selectedTags.length < maxTags) {
+                            setSelectedTags([...new Set([...selectedTags, value.trim()].slice(0, maxTags))]);
+                            onChange?.([...new Set([...selectedTags, value.trim()].slice(0, maxTags))]);
+                        } else {
+                            setSelectedTags([...new Set([...selectedTags, value.trim()])]);
+                            onChange?.([...new Set([...selectedTags, value.trim()])]);
+                        }
                     }
                 }
 
@@ -103,24 +115,28 @@ export default function TagContainer({
             }
 
             setInputValue('');
+            setInputFocus(true);
         }
 
         if (e.key === 'Enter') {
             if (activeIndex !== null) {
-                // addToCategory(filteredTags[activeIndex].slice(0, maxTags));
-                setSelectedTags([...new Set([...selectedTags, filteredTags[activeIndex]].slice(0, maxTags))]);
-                // onCange?.([...new Set([...selectedTags, filteredTags[activeIndex]].slice(0, maxTags))]);
+                if (maxTags) {
+                    setSelectedTags([...new Set([...selectedTags, filteredTags[activeIndex]].slice(0, maxTags))]);
+                    onChange?.([...new Set([...selectedTags, filteredTags[activeIndex]].slice(0, maxTags))]);
+                } else {
+                    setSelectedTags([...new Set([...selectedTags, filteredTags[activeIndex]])]);
+                    onChange?.([...new Set([...selectedTags, filteredTags[activeIndex]])]);
+                }
                 setActiveIndex(null);
             }
+            setInputFocus(true);
             setInputValue('');
         }
 
         if (e.key === 'Backspace') {
-            if (!inputValue) {
-                const tags = [...selectedTags];
-                tags.pop();
-                setSelectedTags(tags);
-                onChange?.(tags);
+            if (!value && selectedTags) {
+                setSelectedTags(selectedTags.slice(0, selectedTags.length - 1));
+                onChange?.(selectedTags.slice(0, selectedTags.length - 1));
             }
             setActiveIndex(null);
         }
@@ -146,16 +162,22 @@ export default function TagContainer({
         }
     };
 
-    const clickHandler = () => {
-        if (inputValue.trim()) {
-            setSelectedTags([...new Set([...selectedTags, inputValue].slice(0, maxTags))]);
+    const clickHandler = async () => {
+        if (addToCategoryOnClick && inputValue.trim()) {
+            if (mode === 'advanced-multi-select') {
+                setIsLoading(true);
+                await addToCategoryOnClick(inputValue.trim());
+                setIsLoading(false);
+                setSelectedTags([...new Set([...selectedTags, inputValue].slice(0, maxTags))]);
+                setListOfTags([...listOfTags, inputValue.trim()]);
+            } else {
+                setSelectedTags([...new Set([...selectedTags, inputValue].slice(0, maxTags))]);
+            }
             onChange?.([...new Set([...selectedTags, inputValue].slice(0, maxTags))]);
-            // addToCategory(inputValue);
-            setListOfTags([...listOfTags, inputValue]);
         }
-        if (resolveStatus !== undefined) {
-            setInputValue('');
-        }
+
+        setInputFocus(true);
+        setInputValue('');
     };
 
     const tagsMouseDown = (e: any) => {
@@ -196,7 +218,7 @@ export default function TagContainer({
                     id="tags"
                     onMouseDown={tagsMouseDown}
                     className={`relative w-full max-w-full min-h-[3.5rem] h-fit flex items-start gap-2 mt-2 p-2.5 rounded-[0.625rem] border-zSecondary-100 border ${
-                        userTheme === 'dark' ? 'bg-bg-dark' : 'bg-bg-light'
+                        userTheme === 'dark' ? 'bg-bg-dark' : 'bg-white'
                     } ${tagsClassName}`}
                 >
                     <SelectedTagsList
@@ -211,16 +233,13 @@ export default function TagContainer({
                         inputKeyDown={inputKeyDown}
                         setShowDropdown={setShowDropdown}
                         inputClassName={inputClassName}
-                        resolveStatus={resolveStatus}
+                        isLoading={isLoading}
+                        inputFocus={inputFocus}
                     />
 
                     {mode === 'advanced-multi-select' && (
-                        <span
-                            className={`w-fit mt-1.5 rounded-full transition-all ease-in-out ${
-                                theme === 'dark' ? 'hover:bg-zGray-800' : 'hover:bg-zGray-300'
-                            }`}
-                        >
-                            {resolveStatus === undefined ? (
+                        <span className={`w-fit mt-1.5 rounded-full transition-all ease-in-out`}>
+                            {isLoading ? (
                                 <span className="flex items-center gap-2 w-36">
                                     <span className="w-6 h-6 animate-spin border-2 border-dashed rounded-full mr-5" />
                                     <div className="text-xs">در حال افزودن</div>
@@ -236,19 +255,19 @@ export default function TagContainer({
                 </div>
             </section>
 
-            <span id="dropdown-container" className="relative w-full z-50">
+            <span id="dropdown-container" className="relative w-full h-auto z-50">
                 {showDropdown &&
                     mode === 'advanced-multi-select' &&
                     inputValue &&
                     !filteredTags.length &&
                     !filteredTags.find((item) => item === inputValue) && (
                         <div className="absolute w-full">
-                            <EmptyList theme={theme} inputValue={inputValue} clickHandler={clickHandler} resolveStatus={resolveStatus} />
+                            <EmptyList {...globalProps} inputValue={inputValue} clickHandler={clickHandler} isLoading={isLoading} />
                         </div>
                     )}
 
                 {showDropdown && mode !== 'array-of-string' && !!filteredTags.length && (
-                    <div className="absolute w-full">
+                    <div className="absolute w-full h-auto">
                         <Dropdown
                             {...globalProps}
                             {...selectedTagsProps}
@@ -260,7 +279,7 @@ export default function TagContainer({
                             clickHandler={clickHandler}
                             activeIndex={activeIndex}
                             setShowDropdown={setShowDropdown}
-                            resolveStatus={resolveStatus}
+                            isLoading={isLoading}
                         />
                     </div>
                 )}
