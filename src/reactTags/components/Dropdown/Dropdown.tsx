@@ -1,7 +1,7 @@
 import React from 'react';
 import { DropdownProps } from './Dropdown.interface';
 import EmptyList from '../EmptyList/EmptyList';
-import { useOutsideClick } from '@/hooks/useOutsideClick';
+import { useOutsideClick } from '../../hooks/useOutsideClick';
 
 const Dropdown = ({
     theme,
@@ -29,6 +29,17 @@ const Dropdown = ({
         e.stopPropagation();
     };
 
+    const handleClick = (item: string) => {
+        if (maxTags) {
+            setSelectedTags([...new Set([...selectedTags, item].slice(0, maxTags))]);
+            onChange?.([...new Set([...selectedTags, item].slice(0, maxTags))]);
+        } else {
+            setSelectedTags([...new Set([...selectedTags, item])]);
+            onChange?.([...new Set([...selectedTags, item])]);
+        }
+        setInputValue('');
+    };
+
     return (
         <div
             id="dropDown"
@@ -39,31 +50,40 @@ const Dropdown = ({
             } ${dropDownContainerClassName}`}
         >
             {mode === 'advanced-multi-select' && filteredTags && inputValue.trim() && !filteredTags.find((tag: string) => tag === inputValue) && (
-                <EmptyList inputValue={inputValue} clickHandler={clickHandler} theme={theme} mode={mode} isLoading={isLoading} />
+                <EmptyList
+                    inputValue={inputValue}
+                    clickHandler={clickHandler}
+                    theme={theme}
+                    mode={mode}
+                    isLoading={isLoading}
+                    emptyListClassName="border-0"
+                />
             )}
 
-            {filteredTags.map((item: string) => (
-                <span
-                    key={item}
-                    onClick={() => {
-                        if (maxTags) {
-                            setSelectedTags([...new Set([...selectedTags, item].slice(0, maxTags))]);
-                            onChange?.([...new Set([...selectedTags, item].slice(0, maxTags))]);
-                        } else {
-                            setSelectedTags([...new Set([...selectedTags, item])]);
-                            onChange?.([...new Set([...selectedTags, item])]);
-                        }
-                        setInputValue('');
-                    }}
-                    className={`truncate cursor-pointer rounded-lg h-10 px-4 ${
-                        theme === 'dark' ? 'text-white hover:bg-zGray-700' : 'text-zGray-800 hover:bg-zSecondary-300'
-                    } ${filteredTags.indexOf(item) === activeIndex && 'bg-zSecondary-300'} ${
-                        filteredTags.find((tag: string) => tag === selectedTags[selectedTags.indexOf(item)]) && 'text-zSecondary-400 cursor-text'
-                    }`}
-                >
-                    {item}
-                </span>
-            ))}
+            {mode === 'advanced-multi-select' &&
+                !isLoading &&
+                filteredTags &&
+                inputValue.trim() &&
+                !filteredTags.find((tag: string) => tag === inputValue) && <span className={`border border-zSecondary-300`} />}
+
+            {!isLoading && (
+                <div className="flex flex-col gap-1">
+                    {filteredTags.map((item: string) => (
+                        <span
+                            key={item}
+                            onClick={() => handleClick(item)}
+                            className={`truncate cursor-pointer rounded-lg py-2 px-4 ${
+                                theme === 'dark' ? 'text-white hover:bg-zGray-700' : 'text-zGray-800 hover:bg-zSecondary-300'
+                            } ${filteredTags.indexOf(item) === activeIndex && `${theme === 'dark' ? 'bg-zGray-700' : 'bg-zSecondary-300'}`} ${
+                                filteredTags.find((tag: string) => tag === selectedTags[selectedTags.indexOf(item)]) &&
+                                'text-zSecondary-400 cursor-text'
+                            }`}
+                        >
+                            {item}
+                        </span>
+                    ))}
+                </div>
+            )}
         </div>
     );
 };
