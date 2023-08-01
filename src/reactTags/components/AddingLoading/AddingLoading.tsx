@@ -1,3 +1,4 @@
+import React from 'react';
 import { AddingLoadingProps } from './AddingLoading.interface';
 
 const AddingLoading = ({ theme, loadingText }: AddingLoadingProps) => {
