@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import CloseIcon from '../../assets/icons/closeIcon';
 import { SelectedTagsListProps } from './SelectedTagsList.interface';
 import Input from '../Input/Input';
+import { useOutsideClick } from '../../hooks/useOutsideClick';
 
 const SelectedTagsList = ({
     theme,
@@ -32,20 +33,55 @@ const SelectedTagsList = ({
     }, [mode]);
 
     const selectedTagsKeyDown = (e: any) => {
-        if (e.key === 'Enter' && tagIndex !== undefined) {
+        if (e.key === 'Enter' && tagIndex !== undefined && editedText.trim()) {
             setContentEditable(false);
             setSelectedTags([
                 ...new Set(
-                    [...selectedTags.slice(0, tagIndex), (selectedTags[tagIndex] = editedText), ...selectedTags.slice(tagIndex)].slice(0, maxTags),
+                    [...selectedTags.slice(0, tagIndex), (selectedTags[tagIndex] = editedText.trim()), ...selectedTags.slice(tagIndex + 1)].slice(
+                        0,
+                        maxTags,
+                    ),
                 ),
             ]);
 
             onChange?.([
                 ...new Set(
-                    [...selectedTags.slice(0, tagIndex), (selectedTags[tagIndex] = editedText), ...selectedTags.slice(tagIndex)].slice(0, maxTags),
+                    [...selectedTags.slice(0, tagIndex), (selectedTags[tagIndex] = editedText.trim()), ...selectedTags.slice(tagIndex + 1)].slice(
+                        0,
+                        maxTags,
+                    ),
                 ),
             ]);
         }
+    };
+
+    const handleClickOutside = () => {
+        console.log(editedText);
+        if (tagIndex !== undefined && editedText.trim()) {
+            setSelectedTags([
+                ...new Set(
+                    [...selectedTags.slice(0, tagIndex), (selectedTags[tagIndex] = editedText.trim()), ...selectedTags.slice(tagIndex + 1)].slice(
+                        0,
+                        maxTags,
+                    ),
+                ),
+            ]);
+
+            onChange?.([
+                ...new Set(
+                    [...selectedTags.slice(0, tagIndex), (selectedTags[tagIndex] = editedText.trim()), ...selectedTags.slice(tagIndex + 1)].slice(
+                        0,
+                        maxTags,
+                    ),
+                ),
+            ]);
+        }
+    };
+
+    const ref: any = useOutsideClick(handleClickOutside, false, true);
+
+    const selectedTagOnClick = (e: any) => {
+        e.stopPropagation();
     };
 
     useEffect(() => {
@@ -55,16 +91,18 @@ const SelectedTagsList = ({
     }, [selectedTags, setSelectedTags]);
 
     return (
-        <div className="w-full flex flex-wrap gap-2 ml-3">
+        <div id="selectedTags" className="tag w-full flex flex-wrap gap-2 ml-3">
             {selectedTags &&
                 !!selectedTags.length &&
                 selectedTags.map((tag: string, index) => (
                     <span
                         title={tag}
                         key={tag}
-                        onClick={() => {
+                        ref={ref}
+                        onClick={(e) => {
                             if (mode === 'array-of-string') setContentEditable(true);
                             setTagIndex(index);
+                            selectedTagOnClick(e);
                         }}
                         className={`selectedTag w-fit max-w-[400px] h-8 px-2 rounded-[4px] flex items-center gap-2.5 text-sm cursor-default focus:border-2 focus:border-zSecondary-400 hover:scale-105 ${
                             theme === 'dark' ? 'bg-zDark-5' : 'bg-zGray-300'
@@ -73,7 +111,10 @@ const SelectedTagsList = ({
                         <p
                             dir="auto"
                             contentEditable={contentEditable}
-                            onClick={() => setTagIndex(index)}
+                            onClick={() => {
+                                if (mode === 'array-of-string') setContentEditable(true);
+                                setTagIndex(index);
+                            }}
                             onKeyDown={selectedTagsKeyDown}
                             onInput={(e) => {
                                 e.preventDefault();
@@ -83,7 +124,7 @@ const SelectedTagsList = ({
                                     setEditedText(text);
                                 }
                             }}
-                            className={`text-[13px] outline-none truncate ${contentEditable && 'cursor-text'}`}
+                            className={`tagP text-[13px] outline-none truncate ${contentEditable && 'cursor-text'}`}
                         >
                             {tag ? tag : selectedTags.filter((i) => i !== tag)}
                         </p>
