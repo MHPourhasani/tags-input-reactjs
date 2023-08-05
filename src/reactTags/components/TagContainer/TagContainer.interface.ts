@@ -3,9 +3,9 @@ import { ModeType, ThemeType } from '../../interfaces/general';
 export interface TagContainerProps {
     mode: ModeType;
     theme?: ThemeType;
-    title: string;
+    title?: string;
     maxTags?: number;
-    defaultSelectedTags: string[];
+    defaultSelectedTags?: string[];
     onChange?: (tags: string[]) => void;
     categoriesTags?: string[];
     inputPlaceholder?: string;
