@@ -23,7 +23,7 @@ const Dropdown = ({
         setShowDropdown(false);
     };
 
-    const ref: any = useOutsideClick(handleClickOutside);
+    const ref: any = useOutsideClick(handleClickOutside, true, false);
 
     const dropDownOnClick = (e: any) => {
         e.stopPropagation();
