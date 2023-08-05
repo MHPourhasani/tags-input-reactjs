@@ -1,11 +1,21 @@
 import { useEffect, useRef } from 'react';
 
-export const useOutsideClick = (callback: any) => {
+export const useOutsideClick = (callback: any, input?: boolean, selectedTag?: boolean) => {
     const ref = useRef<any>();
 
     useEffect(() => {
         const handleClick = (event: any) => {
-            if (ref.current && !ref.current.contains(event.target) && !document.getElementById('input')?.contains(event.target)) {
+            if (ref.current && !ref.current.contains(event.target)) {
+                if (input) {
+                    if (!document.getElementById('input')?.contains(event.target)) {
+                        callback();
+                    }
+                } else if (selectedTag) {
+                    if (!document.querySelector('.tagP')?.contains(event.target)) {
+                        callback();
+                    }
+                }
+            } else {
                 callback();
             }
         };
@@ -15,7 +25,7 @@ export const useOutsideClick = (callback: any) => {
         return () => {
             document.removeEventListener('click', handleClick);
         };
-    }, [callback, ref]);
+    }, [callback, input, ref, selectedTag]);
 
     return ref;
 };
