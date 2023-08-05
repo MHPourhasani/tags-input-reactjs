@@ -11,6 +11,7 @@ const ReactTags = (props: TagContainerProps) => {
             title={props.title}
             defaultSelectedTags={props.defaultSelectedTags}
             maxTags={props.maxTags}
+            onChange={props.onChange}
             categoriesTags={props.categoriesTags}
             tagsContainerClassName={props.tagsContainerClassName}
             tagsClassName={props.tagsClassName}
