@@ -108,18 +108,22 @@ export default function TagContainer({
                     if (maxTags) {
                         if (selectedTags.length < maxTags && listOfTags.find((tag: string) => tag !== value.trim())) {
                             setIsLoading(true);
-                            await addToCategoryOnClick(value.trim());
+                            if (!isLoading) {
+                                await addToCategoryOnClick(value.trim());
+                            }
+                            await setSelectedTags([...new Set([...selectedTags, value.trim()].slice(0, maxTags))]);
+                            await onChange?.([...new Set([...selectedTags, value.trim()].slice(0, maxTags))]);
                             setIsLoading(false);
 
-                            setSelectedTags([...new Set([...selectedTags, value.trim()].slice(0, maxTags))]);
-                            onChange?.([...new Set([...selectedTags, value.trim()].slice(0, maxTags))]);
                         }
                     } else {
                         setIsLoading(true);
-                        await addToCategoryOnClick(value.trim());
-                        setIsLoading(false);
+                        if (!isLoading) {
+                            await addToCategoryOnClick(value.trim());
+                        }
                         setSelectedTags([...new Set([...selectedTags, value.trim()])]);
                         onChange?.([...new Set([...selectedTags, value.trim()])]);
+                        setIsLoading(false);
                     }
                 }
 
@@ -187,14 +191,16 @@ export default function TagContainer({
         if (inputValue.trim()) {
             if (addToCategoryOnClick && mode === 'advanced-multi-select') {
                 setIsLoading(true);
-                await addToCategoryOnClick(inputValue.trim());
-                setIsLoading(false);
+                if (!isLoading) {
+                    await addToCategoryOnClick(inputValue.trim());
+                }
                 if (maxTags) {
                     setSelectedTags([...new Set([...selectedTags, inputValue].slice(0, maxTags))]);
                 } else {
                     setSelectedTags([...new Set([...selectedTags, inputValue])]);
                 }
                 setListOfTags([...listOfTags, inputValue.trim()]);
+                setIsLoading(false);
             } else {
                 if (maxTags) {
                     setSelectedTags([...new Set([...selectedTags, inputValue].slice(0, maxTags))]);
