@@ -23,7 +23,7 @@ const SelectedTagsList = ({
     setInputFocus,
 }: SelectedTagsListProps) => {
     const [contentEditable, setContentEditable] = useState(false);
-    const [editedText, setEditedText] = useState('');
+    const [, setEditedText] = useState('');
     const [tagIndex, setTagIndex] = useState<number>();
     const editedTextRef = useRef<any>();
 
@@ -34,7 +34,8 @@ const SelectedTagsList = ({
     }, [mode]);
 
     const selectedTagsKeyDown = (e: any) => {
-        if (e.key === 'Enter' && tagIndex !== undefined) {
+        if (e.key === 'Enter' && tagIndex !== undefined && editedTextRef.current.trim()) {
+            console.log(editedTextRef.current);
             setContentEditable(false);
             setSelectedTags([
                 ...new Set(
@@ -59,7 +60,7 @@ const SelectedTagsList = ({
     };
 
     const handleClickOutside = () => {
-        if (tagIndex !== undefined && editedTextRef.current) {
+        if (tagIndex !== undefined && editedTextRef.current.trim()) {
             setSelectedTags([
                 ...new Set(
                     [...selectedTags.slice(0, tagIndex), (selectedTags[tagIndex] = editedTextRef.current), ...selectedTags.slice(tagIndex + 1)].slice(
@@ -123,8 +124,8 @@ const SelectedTagsList = ({
                             }}
                             className={`tagP text-[13px] outline-none truncate ${contentEditable && 'cursor-text'}`}
                         >
-                            {/* {tag ? tag : selectedTags.filter((i) => i !== tag)} */}
-                            {tag}
+                            {tag ? tag : selectedTags.filter((i) => i !== '')}
+                            {/* {tag} */}
                         </p>
                         <CloseIcon
                             className={`w-3 h-auto shrink-0 stroke-black cursor-pointer hover:scale-125 transition-all ease-in-out hover:stroke-red-600 ${selectedTagCloseIconClass}`}
