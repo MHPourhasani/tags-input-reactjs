@@ -56,28 +56,30 @@ const SelectedTagsList = ({
                     ].slice(0, maxTags),
                 ),
             ]);
+            setTagIndex(undefined);
         }
     };
 
     const handleClickOutside = () => {
-        if (tagIndex !== undefined && editedTextRef.current.trim()) {
-            setSelectedTags([
-                ...new Set(
-                    [...selectedTags.slice(0, tagIndex), (selectedTags[tagIndex] = editedTextRef.current), ...selectedTags.slice(tagIndex + 1)].slice(
-                        0,
-                        maxTags,
-                    ),
-                ),
-            ]);
+        if (tagIndex !== undefined) {
+            if (editedTextRef.current && selectedTags.find((item) => selectedTags.indexOf(item) === tagIndex)) {
+                setSelectedTags([
+                    ...new Set([
+                        ...selectedTags.slice(0, tagIndex),
+                        (selectedTags[tagIndex] = editedTextRef.current.trim()),
+                        ...selectedTags.slice(tagIndex + 1),
+                    ]),
+                ]);
 
-            onChange?.([
-                ...new Set(
-                    [...selectedTags.slice(0, tagIndex), (selectedTags[tagIndex] = editedTextRef.current), ...selectedTags.slice(tagIndex + 1)].slice(
-                        0,
-                        maxTags,
-                    ),
-                ),
-            ]);
+                onChange?.([
+                    ...new Set([
+                        ...selectedTags.slice(0, tagIndex),
+                        (selectedTags[tagIndex] = editedTextRef.current.trim()),
+                        ...selectedTags.slice(tagIndex + 1),
+                    ]),
+                ]);
+            }
+            setTagIndex(undefined);
         }
     };
 
@@ -85,10 +87,11 @@ const SelectedTagsList = ({
 
     const selectedTagOnClick = (e: any) => {
         e.stopPropagation();
+        console.log('click');
     };
 
     return (
-        <div id="selectedTags" className="tag w-full flex flex-wrap gap-2 ml-3">
+        <div id="selectedTags" onClick={() => setTagIndex(undefined)} className="tag w-full flex flex-wrap gap-2 ml-3">
             {selectedTags &&
                 !!selectedTags.length &&
                 selectedTags.map((tag: string, index) => (
@@ -124,8 +127,7 @@ const SelectedTagsList = ({
                             }}
                             className={`tagP text-[13px] outline-none truncate ${contentEditable && 'cursor-text'}`}
                         >
-                            {tag ? tag : selectedTags.filter((i) => i !== '')}
-                            {/* {tag} */}
+                            {tag}
                         </p>
                         <CloseIcon
                             className={`w-3 h-auto shrink-0 stroke-black cursor-pointer hover:scale-125 transition-all ease-in-out hover:stroke-red-600 ${selectedTagCloseIconClass}`}
