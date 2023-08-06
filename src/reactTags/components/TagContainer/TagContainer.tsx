@@ -110,19 +110,18 @@ export default function TagContainer({
                             setIsLoading(true);
                             if (!isLoading) {
                                 await addToCategoryOnClick(value.trim());
+                                setSelectedTags([...new Set([...selectedTags, value.trim()].slice(0, maxTags))]);
+                                onChange?.([...new Set([...selectedTags, value.trim()].slice(0, maxTags))]);
                             }
-                            await setSelectedTags([...new Set([...selectedTags, value.trim()].slice(0, maxTags))]);
-                            await onChange?.([...new Set([...selectedTags, value.trim()].slice(0, maxTags))]);
                             setIsLoading(false);
-
                         }
                     } else {
                         setIsLoading(true);
                         if (!isLoading) {
                             await addToCategoryOnClick(value.trim());
+                            setSelectedTags([...new Set([...selectedTags, value.trim()])]);
+                            onChange?.([...new Set([...selectedTags, value.trim()])]);
                         }
-                        setSelectedTags([...new Set([...selectedTags, value.trim()])]);
-                        onChange?.([...new Set([...selectedTags, value.trim()])]);
                         setIsLoading(false);
                     }
                 }
