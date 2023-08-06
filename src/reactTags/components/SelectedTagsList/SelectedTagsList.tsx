@@ -24,7 +24,7 @@ const SelectedTagsList = ({
 }: SelectedTagsListProps) => {
     const [contentEditable, setContentEditable] = useState(false);
     const [, setEditedText] = useState('');
-    const [tagIndex, setTagIndex] = useState<number>();
+    const [tagIndex, setTagIndex] = useState<number | undefined>();
     const editedTextRef = useRef<any>();
 
     useEffect(() => {
@@ -35,8 +35,8 @@ const SelectedTagsList = ({
 
     const selectedTagsKeyDown = (e: any) => {
         if (e.key === 'Enter' && tagIndex !== undefined && editedTextRef.current.trim()) {
-            console.log(editedTextRef.current);
             setContentEditable(false);
+
             setSelectedTags([
                 ...new Set(
                     [
@@ -61,25 +61,30 @@ const SelectedTagsList = ({
     };
 
     const handleClickOutside = () => {
-        if (tagIndex !== undefined) {
-            if (editedTextRef.current && selectedTags.find((item) => selectedTags.indexOf(item) === tagIndex)) {
+        if (tagIndex !== undefined && mode === 'array-of-string') {
+            if (selectedTags.find((item) => selectedTags.indexOf(item) === tagIndex)) {
+                console.log('out');
                 setSelectedTags([
-                    ...new Set([
-                        ...selectedTags.slice(0, tagIndex),
-                        (selectedTags[tagIndex] = editedTextRef.current.trim()),
-                        ...selectedTags.slice(tagIndex + 1),
-                    ]),
+                    ...new Set(
+                        [
+                            ...selectedTags.slice(0, tagIndex),
+                            (selectedTags[tagIndex] = editedTextRef.current),
+                            ...selectedTags.slice(tagIndex + 1),
+                        ].slice(0, maxTags),
+                    ),
                 ]);
 
                 onChange?.([
-                    ...new Set([
-                        ...selectedTags.slice(0, tagIndex),
-                        (selectedTags[tagIndex] = editedTextRef.current.trim()),
-                        ...selectedTags.slice(tagIndex + 1),
-                    ]),
+                    ...new Set(
+                        [
+                            ...selectedTags.slice(0, tagIndex),
+                            (selectedTags[tagIndex] = editedTextRef.current),
+                            ...selectedTags.slice(tagIndex + 1),
+                        ].slice(0, maxTags),
+                    ),
                 ]);
+                setTagIndex(undefined);
             }
-            setTagIndex(undefined);
         }
     };
 
@@ -87,57 +92,58 @@ const SelectedTagsList = ({
 
     const selectedTagOnClick = (e: any) => {
         e.stopPropagation();
-        console.log('click');
     };
 
     return (
-        <div id="selectedTags" onClick={() => setTagIndex(undefined)} className="tag w-full flex flex-wrap gap-2 ml-3">
-            {selectedTags &&
-                !!selectedTags.length &&
-                selectedTags.map((tag: string, index) => (
-                    <span
-                        title={tag}
-                        key={tag}
-                        ref={ref}
-                        onClick={(e) => {
-                            if (mode === 'array-of-string') setContentEditable(true);
-                            setTagIndex(index);
-                            selectedTagOnClick(e);
-                        }}
-                        className={`selectedTag w-fit max-w-[400px] h-8 px-2 rounded-[4px] flex items-center gap-2.5 text-sm cursor-default focus:border-2 focus:border-zSecondary-400 hover:scale-105 ${
-                            theme === 'dark' ? 'bg-zDark-5' : 'bg-zGray-300'
-                        } ${selectedTagClassName}`}
-                    >
-                        <p
-                            dir="auto"
-                            contentEditable={contentEditable}
-                            onClick={() => {
+        <div className="w-full flex flex-wrap gap-2 ml-3">
+            <div id="selectedTags" className="flex items-center gap-2">
+                {selectedTags &&
+                    !!selectedTags.length &&
+                    selectedTags.map((tag: string, index) => (
+                        <span
+                            title={editedTextRef.current}
+                            key={tag}
+                            ref={ref}
+                            onClick={(e) => {
                                 if (mode === 'array-of-string') setContentEditable(true);
                                 setTagIndex(index);
+                                selectedTagOnClick(e);
                             }}
-                            onKeyDown={selectedTagsKeyDown}
-                            onInput={(e) => {
-                                e.preventDefault();
-                                let text: string = '';
-                                if (e.currentTarget.textContent) {
-                                    text = e.currentTarget.textContent;
-                                    setEditedText(text);
-                                    editedTextRef.current = text;
-                                }
-                            }}
-                            className={`tagP text-[13px] outline-none truncate ${contentEditable && 'cursor-text'}`}
+                            className={`selectedTag w-fit max-w-[400px] h-8 px-2 rounded-[4px] flex items-center gap-2.5 text-sm cursor-default focus:border-2 focus:border-zSecondary-400 hover:scale-105 ${
+                                theme === 'dark' ? 'bg-zDark-5' : 'bg-zGray-300'
+                            } ${selectedTagClassName}`}
                         >
-                            {tag}
-                        </p>
-                        <CloseIcon
-                            className={`w-3 h-auto shrink-0 stroke-black cursor-pointer hover:scale-125 transition-all ease-in-out hover:stroke-red-600 ${selectedTagCloseIconClass}`}
-                            onClick={() => {
-                                setSelectedTags(selectedTags.filter((selectTag: string) => selectTag !== tag).slice(0, maxTags));
-                                onChange?.(selectedTags.filter((selectTag: string) => selectTag !== tag).slice(0, maxTags));
-                            }}
-                        />
-                    </span>
-                ))}
+                            <p
+                                dir="auto"
+                                contentEditable={contentEditable}
+                                onClick={() => {
+                                    if (mode === 'array-of-string') setContentEditable(true);
+                                    setTagIndex(index);
+                                }}
+                                onKeyDown={selectedTagsKeyDown}
+                                onInput={(e) => {
+                                    e.preventDefault();
+                                    let text: string = '';
+                                    if (e.currentTarget.textContent) {
+                                        text = e.currentTarget.textContent;
+                                        setEditedText(text);
+                                        editedTextRef.current = text;
+                                    }
+                                }}
+                                className={`tagP text-[13px] outline-none truncate ${contentEditable && 'cursor-text'}`}
+                            >
+                                {tag}
+                            </p>
+                            <CloseIcon
+                                className={`w-3 h-auto shrink-0 stroke-black cursor-pointer hover:scale-125 transition-all ease-in-out hover:stroke-red-600 ${selectedTagCloseIconClass}`}
+                                onClick={() => {
+                                    setSelectedTags(selectedTags.filter((selectTag: string) => selectTag !== tag).slice(0, maxTags));
+                                    onChange?.(selectedTags.filter((selectTag: string) => selectTag !== tag).slice(0, maxTags));
+                                }}
+                            />
+                        </span>
+                    ))}
+            </div>
 
             <Input
                 theme={theme}
