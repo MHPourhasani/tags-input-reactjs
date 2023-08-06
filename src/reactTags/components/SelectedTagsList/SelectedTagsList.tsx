@@ -130,7 +130,7 @@ const SelectedTagsList = ({
                                         editedTextRef.current = text;
                                     }
                                 }}
-                                className={`tagP text-[13px] outline-none truncate ${contentEditable && 'cursor-text'}`}
+                                className={`flex items-center text-[13px] outline-none truncate ${contentEditable && 'cursor-text'}`}
                             >
                                 {tag}
                             </p>
