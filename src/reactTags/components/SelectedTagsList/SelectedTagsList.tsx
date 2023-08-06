@@ -23,9 +23,9 @@ const SelectedTagsList = ({
     setInputFocus,
 }: SelectedTagsListProps) => {
     const [contentEditable, setContentEditable] = useState(false);
-    const [, setEditedText] = useState('');
     const [tagIndex, setTagIndex] = useState<number | undefined>();
     const editedTextRef = useRef<any>();
+    const pRef = useRef<any>();
 
     useEffect(() => {
         if (mode === 'array-of-string') {
@@ -34,26 +34,27 @@ const SelectedTagsList = ({
     }, [mode]);
 
     const selectedTagsKeyDown = (e: any) => {
-        if (e.key === 'Enter' && tagIndex !== undefined && editedTextRef.current.trim()) {
+        if (
+            e.key === 'Enter' &&
+            tagIndex !== undefined &&
+            pRef.current?.innerText &&
+            selectedTags.find((item) => selectedTags.indexOf(item) === tagIndex)
+        ) {
             setContentEditable(false);
 
             setSelectedTags([
                 ...new Set(
-                    [
-                        ...selectedTags.slice(0, tagIndex),
-                        (selectedTags[tagIndex] = editedTextRef.current.trim()),
-                        ...selectedTags.slice(tagIndex + 1),
-                    ].slice(0, maxTags),
+                    [...selectedTags.slice(0, tagIndex), (selectedTags[tagIndex] = pRef.current?.innerText), ...selectedTags.slice(tagIndex + 1)]
+                        .filter((item) => item !== '\n'.toString())
+                        .slice(0, maxTags),
                 ),
             ]);
 
             onChange?.([
                 ...new Set(
-                    [
-                        ...selectedTags.slice(0, tagIndex),
-                        (selectedTags[tagIndex] = editedTextRef.current.trim()),
-                        ...selectedTags.slice(tagIndex + 1),
-                    ].slice(0, maxTags),
+                    [...selectedTags.slice(0, tagIndex), (selectedTags[tagIndex] = pRef.current?.innerText), ...selectedTags.slice(tagIndex + 1)]
+                        .filter((item) => item !== '\n'.toString())
+                        .slice(0, maxTags),
                 ),
             ]);
             setTagIndex(undefined);
@@ -62,24 +63,21 @@ const SelectedTagsList = ({
 
     const handleClickOutside = () => {
         if (tagIndex !== undefined && mode === 'array-of-string') {
-            if (editedTextRef.current && selectedTags.find((item) => selectedTags.indexOf(item) === tagIndex)) {
+            if (pRef.current?.innerText && selectedTags.find((item) => selectedTags.indexOf(item) === tagIndex)) {
+                console.log('out');
                 setSelectedTags([
                     ...new Set(
-                        [
-                            ...selectedTags.slice(0, tagIndex),
-                            (selectedTags[tagIndex] = editedTextRef.current),
-                            ...selectedTags.slice(tagIndex + 1),
-                        ].slice(0, maxTags),
+                        [...selectedTags.slice(0, tagIndex), (selectedTags[tagIndex] = pRef.current?.innerText), ...selectedTags.slice(tagIndex + 1)]
+                            .filter((item) => item !== '\n'.toString())
+                            .slice(0, maxTags),
                     ),
                 ]);
 
                 onChange?.([
                     ...new Set(
-                        [
-                            ...selectedTags.slice(0, tagIndex),
-                            (selectedTags[tagIndex] = editedTextRef.current),
-                            ...selectedTags.slice(tagIndex + 1),
-                        ].slice(0, maxTags),
+                        [...selectedTags.slice(0, tagIndex), (selectedTags[tagIndex] = pRef.current?.innerText), ...selectedTags.slice(tagIndex + 1)]
+                            .filter((item) => item !== '\n'.toString())
+                            .slice(0, maxTags),
                     ),
                 ]);
                 setTagIndex(undefined);
@@ -93,6 +91,8 @@ const SelectedTagsList = ({
         e.stopPropagation();
     };
 
+    console.log(pRef.current?.innerText);
+
     return (
         <div className="w-full flex flex-wrap gap-2 ml-3">
             <div id="selectedTags" className="flex items-center gap-2">
@@ -100,7 +100,7 @@ const SelectedTagsList = ({
                     !!selectedTags.length &&
                     selectedTags.map((tag: string, index) => (
                         <span
-                            title={editedTextRef.current}
+                            title={tag}
                             key={tag}
                             ref={ref}
                             onClick={(e) => {
@@ -114,6 +114,7 @@ const SelectedTagsList = ({
                         >
                             <p
                                 dir="auto"
+                                ref={pRef}
                                 contentEditable={contentEditable}
                                 onClick={() => {
                                     if (mode === 'array-of-string') setContentEditable(true);
@@ -122,11 +123,8 @@ const SelectedTagsList = ({
                                 onKeyDown={selectedTagsKeyDown}
                                 onInput={(e) => {
                                     e.preventDefault();
-                                    let text: string = '';
                                     if (e.currentTarget.textContent) {
-                                        text = e.currentTarget.textContent;
-                                        setEditedText(text);
-                                        editedTextRef.current = text;
+                                        editedTextRef.current = e.currentTarget.textContent;
                                     }
                                 }}
                                 className={`flex items-center text-[13px] outline-none truncate ${contentEditable && 'cursor-text'}`}
