@@ -11,12 +11,12 @@ export const useOutsideClick = (callback: any, input?: boolean, selectedTag?: bo
                         callback();
                     }
                 } else if (selectedTag) {
-                    if (!document.querySelector('.tagP')?.contains(event.target)) {
+                    if (!document.querySelector('.selectedTag')?.contains(event.target)) {
                         callback();
                     }
+                } else {
+                    callback();
                 }
-            } else {
-                callback();
             }
         };
 
