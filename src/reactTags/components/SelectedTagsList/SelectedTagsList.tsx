@@ -62,8 +62,7 @@ const SelectedTagsList = ({
 
     const handleClickOutside = () => {
         if (tagIndex !== undefined && mode === 'array-of-string') {
-            if (selectedTags.find((item) => selectedTags.indexOf(item) === tagIndex)) {
-                console.log('out');
+            if (editedTextRef.current && selectedTags.find((item) => selectedTags.indexOf(item) === tagIndex)) {
                 setSelectedTags([
                     ...new Set(
                         [
