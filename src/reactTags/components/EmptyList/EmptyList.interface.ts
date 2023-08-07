@@ -1,4 +1,4 @@
-import { ModeType, ThemeType } from '../../interfaces/general';
+import { ModeType, ThemeType } from '../../types/general';
 
 export interface EmptyListProps {
     theme: ThemeType;
