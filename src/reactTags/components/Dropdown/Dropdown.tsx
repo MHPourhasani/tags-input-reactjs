@@ -2,6 +2,7 @@ import React from 'react';
 import { DropdownProps } from './Dropdown.interface';
 import EmptyList from '../EmptyList/EmptyList';
 import { useOutsideClick } from '../../hooks/useOutsideClick';
+import { v4 as uuidv4 } from 'uuid';
 
 const Dropdown = ({
     theme,
@@ -31,11 +32,11 @@ const Dropdown = ({
 
     const handleClick = (item: string) => {
         if (maxTags) {
-            setSelectedTags([...new Set([...selectedTags, item].slice(0, maxTags))]);
-            onChange?.([...new Set([...selectedTags, item].slice(0, maxTags))]);
+            setSelectedTags([...new Set([...selectedTags, { id: uuidv4(), tag: item }].slice(0, maxTags))]);
+            onChange?.([...new Set([...selectedTags, { id: uuidv4(), tag: item }].map((i) => i.tag).slice(0, maxTags))]);
         } else {
-            setSelectedTags([...new Set([...selectedTags, item])]);
-            onChange?.([...new Set([...selectedTags, item])]);
+            setSelectedTags([...new Set([...selectedTags, { id: uuidv4(), tag: item }])]);
+            onChange?.([...new Set([...selectedTags, { id: uuidv4(), tag: item }].map((i) => i.tag))]);
         }
         setInputValue('');
     };
@@ -75,7 +76,7 @@ const Dropdown = ({
                             className={`truncate cursor-pointer rounded-lg py-2 px-4 ${
                                 theme === 'dark' ? 'text-white hover:bg-zGray-700' : 'text-zGray-800 hover:bg-zSecondary-300'
                             } ${filteredTags.indexOf(item) === activeIndex && `${theme === 'dark' ? 'bg-zGray-700' : 'bg-zSecondary-300'}`} ${
-                                filteredTags.find((tag: string) => tag === selectedTags[selectedTags.indexOf(item)]) &&
+                                filteredTags.find((tag: string) => tag === selectedTags[selectedTags.map((i) => i.tag).indexOf(item)]) &&
                                 'text-zSecondary-400 cursor-text'
                             }`}
                         >
