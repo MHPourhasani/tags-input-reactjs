@@ -4,10 +4,10 @@ export interface SelectedTagsListProps {
     theme: ThemeType;
     mode: ModeType;
     maxTags?: number;
-    selectedTags: { id: string; tag: string }[];
+    selectedTags: string[];
     setSelectedTags: any;
     setShowDropdown: any;
-    onChange?: (tags: string[]) => void;
+    onChange: any;
     selectedTagClassName?: string;
     selectedTagCloseIconClass?: string;
     inputPlaceholder: string;
