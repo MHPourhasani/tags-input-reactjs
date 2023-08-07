@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { TagContainerProps } from './TagContainer.interface';
-import { FilteredTagsType, ThemeType } from '../../interfaces/general';
+import { FilteredTagsType, SelectedTagsType, ThemeType } from '../../types/general';
 import SelectedTagsList from '../SelectedTagsList/SelectedTagsList';
 import Dropdown from '../Dropdown/Dropdown';
 import EmptyList from '../EmptyList/EmptyList';
@@ -26,7 +26,7 @@ export default function TagContainer({
 }: TagContainerProps) {
     const [userTheme, setUserTheme] = useState<ThemeType>('light');
     const [inputValue, setInputValue] = useState('');
-    const [selectedTags, setSelectedTags] = useState<string[]>([]);
+    const [selectedTags, setSelectedTags] = useState<SelectedTagsType>([]);
     const [filteredTags, setFilteredTags] = useState<FilteredTagsType>([]);
     const [showDropdown, setShowDropdown] = useState(false);
     const [listOfTags, setListOfTags] = useState<any>([]);
