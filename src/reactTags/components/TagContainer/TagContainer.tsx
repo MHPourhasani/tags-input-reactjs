@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { TagContainerProps } from './TagContainer.interface';
-import { FilteredTagsType, SelectedTagsType, ThemeType } from '../../interfaces/general';
+import { FilteredTagsType, ThemeType } from '../../interfaces/general';
 import SelectedTagsList from '../SelectedTagsList/SelectedTagsList';
 import Dropdown from '../Dropdown/Dropdown';
 import EmptyList from '../EmptyList/EmptyList';
 import CloseIcon from '../../assets/icons/closeIcon';
 import AddingLoading from '../AddingLoading/AddingLoading';
-import { v4 as uuidv4 } from 'uuid';
 
 export default function TagContainer({
     mode,
@@ -27,7 +26,7 @@ export default function TagContainer({
 }: TagContainerProps) {
     const [userTheme, setUserTheme] = useState<ThemeType>('light');
     const [inputValue, setInputValue] = useState('');
-    const [selectedTags, setSelectedTags] = useState<SelectedTagsType[]>([]);
+    const [selectedTags, setSelectedTags] = useState<string[]>([]);
     const [filteredTags, setFilteredTags] = useState<FilteredTagsType>([]);
     const [showDropdown, setShowDropdown] = useState(false);
     const [listOfTags, setListOfTags] = useState<any>([]);
@@ -44,30 +43,12 @@ export default function TagContainer({
     useEffect(() => {
         if (defaultSelectedTags) {
             if (maxTags) {
-                setSelectedTags(
-                    [
-                        ...new Set(
-                            defaultSelectedTags.map((item: any) => {
-                                return { id: uuidv4(), tag: item };
-                            }),
-                        ),
-                    ].slice(0, maxTags),
-                );
+                setSelectedTags([...new Set(defaultSelectedTags.slice(0, maxTags))]);
             } else {
-                setSelectedTags([
-                    ...new Set(
-                        defaultSelectedTags.map((item: any) => {
-                            return { id: uuidv4(), tag: item };
-                        }),
-                    ),
-                ]);
+                setSelectedTags([...new Set(defaultSelectedTags)]);
             }
         }
     }, [defaultSelectedTags, maxTags]);
-
-    useEffect(() => {
-        // console.log(selectedTags);
-    }, [selectedTags]);
 
     useEffect(() => {
         if (categoriesTags) {
@@ -111,7 +92,7 @@ export default function TagContainer({
         if (e.key === 'Enter' && value.trim() && activeIndex === null) {
             if (
                 mode === 'multi-select' &&
-                selectedTags.filter((item: SelectedTagsType) => Object.values(item).join('').toLowerCase().includes(value.toLowerCase()))
+                selectedTags.filter((item: string) => Object.values(item).join('').toLowerCase().includes(value.toLowerCase()))
             ) {
                 if (filteredTags.find((i) => i === value)) {
                     if (maxTags) {
@@ -147,11 +128,11 @@ export default function TagContainer({
 
                 if (mode === 'array-of-string') {
                     if (maxTags) {
-                        onChange?.([...new Set([...selectedTags, { id: uuidv4(), tag: value.trim() }].map((i) => i.tag).slice(0, maxTags))]);
-                        setSelectedTags([...new Set([...selectedTags, { id: uuidv4(), tag: value.trim() }].slice(0, maxTags))]);
+                        onChange?.([...new Set([...selectedTags, value.trim()].slice(0, maxTags))]);
+                        setSelectedTags([...new Set([...selectedTags, value.trim()].slice(0, maxTags))]);
                     } else {
-                        onChange?.([...new Set([...selectedTags, { id: uuidv4(), tag: value.trim() }].map((i) => i.tag))]);
-                        setSelectedTags([...new Set([...selectedTags, { id: uuidv4(), tag: value.trim() }])]);
+                        onChange?.([...new Set([...selectedTags, value.trim()])]);
+                        setSelectedTags([...new Set([...selectedTags, value.trim()])]);
                     }
                 }
             }
@@ -179,7 +160,7 @@ export default function TagContainer({
         if (e.key === 'Backspace') {
             if (!value && selectedTags) {
                 setSelectedTags(selectedTags.slice(0, selectedTags.length - 1));
-                onChange?.(selectedTags.map((item) => item.tag).slice(0, selectedTags.length - 1));
+                onChange?.(selectedTags.slice(0, selectedTags.length - 1));
             }
             setActiveIndex(null);
         }
@@ -213,74 +194,20 @@ export default function TagContainer({
                     await addToCategoryOnClick(inputValue.trim());
                 }
                 if (maxTags) {
-                    setSelectedTags([
-                        ...new Set(
-                            [
-                                ...selectedTags,
-                                {
-                                    id: uuidv4(),
-                                    tag: inputValue,
-                                },
-                            ].slice(0, maxTags),
-                        ),
-                    ]);
+                    setSelectedTags([...new Set([...selectedTags, inputValue].slice(0, maxTags))]);
                 } else {
-                    setSelectedTags([
-                        ...new Set(
-                            [
-                                ...selectedTags,
-                                {
-                                    id: uuidv4(),
-                                    tag: inputValue,
-                                },
-                            ].slice(0, maxTags),
-                        ),
-                    ]);
+                    setSelectedTags([...new Set([...selectedTags, inputValue])]);
                 }
                 setListOfTags([...listOfTags, inputValue.trim()]);
                 setIsLoading(false);
             } else {
                 if (maxTags) {
-                    setSelectedTags([
-                        ...new Set(
-                            [
-                                ...selectedTags,
-                                {
-                                    id: uuidv4(),
-                                    tag: inputValue,
-                                },
-                            ]
-                                .slice(0, maxTags)
-                                .slice(0, maxTags),
-                        ),
-                    ]);
+                    setSelectedTags([...new Set([...selectedTags, inputValue].slice(0, maxTags))]);
                 } else {
-                    setSelectedTags([
-                        ...new Set(
-                            [
-                                ...selectedTags,
-                                {
-                                    id: uuidv4(),
-                                    tag: inputValue,
-                                },
-                            ].slice(0, maxTags),
-                        ),
-                    ]);
+                    setSelectedTags([...new Set([...selectedTags, inputValue])]);
                 }
             }
-            onChange?.(
-                [
-                    ...new Set(
-                        [
-                            ...selectedTags,
-                            {
-                                id: uuidv4(),
-                                tag: inputValue,
-                            },
-                        ].slice(0, maxTags),
-                    ),
-                ].map((item) => item.tag),
-            );
+            onChange?.([...new Set([...selectedTags, inputValue].slice(0, maxTags))]);
         }
 
         setInputValue('');
