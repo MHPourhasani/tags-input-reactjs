@@ -1,6 +1,6 @@
-import { ThemeType } from "../../interfaces/general";
+import { ThemeType } from '../../types/general';
 
 export interface AddingLoadingProps {
-    theme:ThemeType;
+    theme: ThemeType;
     loadingText: string;
 }
