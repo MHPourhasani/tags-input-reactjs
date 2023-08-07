@@ -1,10 +1,10 @@
-import { ModeType, ThemeType } from '../../interfaces/general';
+import { ModeType, SelectedTagsType, ThemeType } from '../../types/general';
 
 export interface SelectedTagsListProps {
     theme: ThemeType;
     mode: ModeType;
     maxTags?: number;
-    selectedTags: string[];
+    selectedTags: SelectedTagsType;
     setSelectedTags: any;
     setShowDropdown: any;
     onChange: any;
