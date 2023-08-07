@@ -24,7 +24,6 @@ const SelectedTagsList = ({
 }: SelectedTagsListProps) => {
     const [contentEditable, setContentEditable] = useState(false);
     const [tagIndex, setTagIndex] = useState<number | undefined>();
-    const editedTextRef = useRef<any>();
     const pRef = useRef<any>();
 
     useEffect(() => {
@@ -121,12 +120,6 @@ const SelectedTagsList = ({
                                     setTagIndex(index);
                                 }}
                                 onKeyDown={selectedTagsKeyDown}
-                                onInput={(e) => {
-                                    e.preventDefault();
-                                    if (e.currentTarget.textContent) {
-                                        editedTextRef.current = e.currentTarget.textContent;
-                                    }
-                                }}
                                 className={`flex items-center text-[13px] outline-none truncate ${contentEditable && 'cursor-text'}`}
                             >
                                 {tag}
