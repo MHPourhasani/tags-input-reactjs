@@ -1,11 +1,11 @@
-import { ModeType, SelectedTagsType, ThemeType } from '../../interfaces/general';
+import { ModeType, SelectedTagsType, ThemeType } from '../../types/general';
 
 export interface DropdownProps {
     theme: ThemeType;
     mode: ModeType;
     maxTags?: number;
     filteredTags: string[];
-    selectedTags: SelectedTagsType[];
+    selectedTags: SelectedTagsType;
     setSelectedTags: any;
     onChange: any;
     dropDownContainerClassName?: string;
