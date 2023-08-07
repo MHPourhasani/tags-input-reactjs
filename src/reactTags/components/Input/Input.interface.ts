@@ -8,7 +8,7 @@ export interface InputProps {
     keyDown?: (e: any) => void;
     theme?: ThemeType;
     inputClassName?: string;
-    selectedTags: string[];
+    selectedTags: { id: string; tag: string }[];
     inputFocus: boolean;
     setInputFocus: any;
     setShowDropdown: any;
