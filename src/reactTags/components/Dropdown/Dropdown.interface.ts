@@ -5,7 +5,7 @@ export interface DropdownProps {
     mode: ModeType;
     maxTags?: number;
     filteredTags: string[];
-    selectedTags: SelectedTagsType;
+    selectedTags: SelectedTagsType[];
     setSelectedTags: any;
     onChange: any;
     dropDownContainerClassName?: string;
