@@ -11,7 +11,7 @@ export const useOutsideClick = (callback: any, input?: boolean, selectedTag?: bo
                         callback();
                     }
                 } else if (selectedTag) {
-                    if (!document.querySelector('.selectedTag')?.contains(event.target)) {
+                    if (!document.getElementById('selectedTags')?.contains(event.target)) {
                         callback();
                     }
                 } else {
