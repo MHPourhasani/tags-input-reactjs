@@ -80,14 +80,14 @@ export default function TagContainer({
 
     const inputChangeHandler = (e: any) => {
         let value = e.target.value;
-        if (value.trim() || value === '') {
-            setInputValue(value);
-        }
+        // if (value.trim() || value === '') {
+        setInputValue(value);
+        // }
     };
 
     const inputKeyDown = async (e: any) => {
         const value = e.target.value;
-        setInputValue(value.trim());
+        setInputValue(value);
 
         if (e.key === 'Enter' && value.trim() && activeIndex === null) {
             if (
@@ -96,11 +96,11 @@ export default function TagContainer({
             ) {
                 if (filteredTags.find((i) => i === value)) {
                     if (maxTags) {
-                        setSelectedTags([...new Set([...selectedTags, value.trim()].slice(0, maxTags))]);
-                        onChange?.([...new Set([...selectedTags, value.trim()].slice(0, maxTags))]);
+                        setSelectedTags([...new Set([...selectedTags, value.trimEnd()].slice(0, maxTags))]);
+                        onChange?.([...new Set([...selectedTags, value.trimEnd()].slice(0, maxTags))]);
                     } else {
-                        setSelectedTags([...new Set([...selectedTags, value.trim()])]);
-                        onChange?.([...new Set([...selectedTags, value.trim()])]);
+                        setSelectedTags([...new Set([...selectedTags, value.trimEnd()])]);
+                        onChange?.([...new Set([...selectedTags, value.trimEnd()])]);
                     }
                 }
             } else {
@@ -109,18 +109,18 @@ export default function TagContainer({
                         if (selectedTags.length < maxTags && listOfTags.find((tag: string) => tag !== value.trim())) {
                             setIsLoading(true);
                             if (!isLoading) {
-                                await addToCategoryOnClick(value.trim());
-                                setSelectedTags([...new Set([...selectedTags, value.trim()].slice(0, maxTags))]);
-                                onChange?.([...new Set([...selectedTags, value.trim()].slice(0, maxTags))]);
+                                await addToCategoryOnClick(value);
+                                setSelectedTags([...new Set([...selectedTags, value.trimEnd()].slice(0, maxTags))]);
+                                onChange?.([...new Set([...selectedTags, value.trimEnd()].slice(0, maxTags))]);
                             }
                             setIsLoading(false);
                         }
                     } else {
                         setIsLoading(true);
                         if (!isLoading) {
-                            await addToCategoryOnClick(value.trim());
-                            setSelectedTags([...new Set([...selectedTags, value.trim()])]);
-                            onChange?.([...new Set([...selectedTags, value.trim()])]);
+                            await addToCategoryOnClick(value);
+                            setSelectedTags([...new Set([...selectedTags, value.trimEnd()])]);
+                            onChange?.([...new Set([...selectedTags, value.trimEnd()])]);
                         }
                         setIsLoading(false);
                     }
@@ -128,11 +128,11 @@ export default function TagContainer({
 
                 if (mode === 'array-of-string') {
                     if (maxTags) {
-                        onChange?.([...new Set([...selectedTags, value.trim()].slice(0, maxTags))]);
-                        setSelectedTags([...new Set([...selectedTags, value.trim()].slice(0, maxTags))]);
+                        onChange?.([...new Set([...selectedTags, value.trimEnd()].slice(0, maxTags))]);
+                        setSelectedTags([...new Set([...selectedTags, value.trimEnd()].slice(0, maxTags))]);
                     } else {
-                        onChange?.([...new Set([...selectedTags, value.trim()])]);
-                        setSelectedTags([...new Set([...selectedTags, value.trim()])]);
+                        onChange?.([...new Set([...selectedTags, value.trimEnd()])]);
+                        setSelectedTags([...new Set([...selectedTags, value.trimEnd()])]);
                     }
                 }
             }
@@ -191,20 +191,20 @@ export default function TagContainer({
             if (addToCategoryOnClick && mode === 'advanced-multi-select') {
                 setIsLoading(true);
                 if (!isLoading) {
-                    await addToCategoryOnClick(inputValue.trim());
+                    await addToCategoryOnClick(inputValue);
                 }
                 if (maxTags) {
-                    setSelectedTags([...new Set([...selectedTags, inputValue].slice(0, maxTags))]);
+                    setSelectedTags([...new Set([...selectedTags, inputValue.trimEnd()].slice(0, maxTags))]);
                 } else {
-                    setSelectedTags([...new Set([...selectedTags, inputValue])]);
+                    setSelectedTags([...new Set([...selectedTags, inputValue.trimEnd()])]);
                 }
-                setListOfTags([...listOfTags, inputValue.trim()]);
+                setListOfTags([...listOfTags, inputValue.trimEnd()]);
                 setIsLoading(false);
             } else {
                 if (maxTags) {
-                    setSelectedTags([...new Set([...selectedTags, inputValue].slice(0, maxTags))]);
+                    setSelectedTags([...new Set([...selectedTags, inputValue.trimEnd()].slice(0, maxTags))]);
                 } else {
-                    setSelectedTags([...new Set([...selectedTags, inputValue])]);
+                    setSelectedTags([...new Set([...selectedTags, inputValue.trimEnd()])]);
                 }
             }
             onChange?.([...new Set([...selectedTags, inputValue].slice(0, maxTags))]);
