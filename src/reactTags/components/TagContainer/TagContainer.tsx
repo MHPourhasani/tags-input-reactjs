@@ -22,8 +22,8 @@ export default function TagContainer({
     tagsContainerClassName,
     tagsClassName,
     selectedTagClassName,
-    selectedTagCloseIconClass,
     closeIcon,
+    selectedTagCloseIconClass,
 }: TagContainerProps) {
     const [userTheme, setUserTheme] = useState<ThemeType>('light');
     const [inputValue, setInputValue] = useState('');
@@ -240,13 +240,15 @@ export default function TagContainer({
     return (
         <section dir="rtl" id="tagsContainer" className={`w-full flex flex-col items-center font-iranyekan ${tagsContainerClassName}`}>
             <section className={`relative w-full`}>
-                <label className={`text-sm ${userTheme === 'dark' ? 'text-zSecondary-10' : 'text-zGray-800'}`}>{`${title}`}</label>
+                <div className="w-full flex items-center">
+                    <label className={`text-sm ${userTheme === 'dark' ? 'text-zSecondary-10' : 'text-zGray-800'}`}>{`${title}`}</label>
 
-                {maxTags && (
-                    <label
-                        className={`text-sm mr-1 ${userTheme === 'dark' ? 'text-zSecondary-400' : 'text-zSecondary-400'}`}
-                    >{`(حداکثر ${maxTags} مورد)`}</label>
-                )}
+                    {maxTags && (
+                        <label
+                            className={`text-sm mr-1 ${userTheme === 'dark' ? 'text-zSecondary-400' : 'text-zSecondary-400'}`}
+                        >{`(حداکثر ${maxTags} مورد)`}</label>
+                    )}
+                </div>
 
                 <div
                     id="tags"
