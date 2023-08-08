@@ -59,7 +59,11 @@ const SelectedTagsList = ({
             if (e.key === 'Enter') {
                 setSelectedTags([
                     ...new Set(
-                        [...selectedTags.slice(0, tagIndex), (selectedTags[tagIndex] = editedTextRef.current), ...selectedTags.slice(tagIndex + 1)]
+                        [
+                            ...selectedTags.slice(0, tagIndex),
+                            (selectedTags[tagIndex] = editedTextRef.current.trim()),
+                            ...selectedTags.slice(tagIndex + 1),
+                        ]
                             .filter((item) => item.length)
                             .slice(0, maxTags),
                     ),
@@ -67,7 +71,11 @@ const SelectedTagsList = ({
 
                 onChange?.([
                     ...new Set(
-                        [...selectedTags.slice(0, tagIndex), (selectedTags[tagIndex] = editedTextRef.current), ...selectedTags.slice(tagIndex + 1)]
+                        [
+                            ...selectedTags.slice(0, tagIndex),
+                            (selectedTags[tagIndex] = editedTextRef.current.trim()),
+                            ...selectedTags.slice(tagIndex + 1),
+                        ]
                             .filter((item) => item.length)
                             .slice(0, maxTags),
                     ),
@@ -90,6 +98,11 @@ const SelectedTagsList = ({
                                 if (mode === 'array-of-string') setContentEditable(true);
                                 setTagIndex(index);
                             }}
+                            onFocus={() => {
+                                setTagIndex(index);
+                                editedTextRef.current = tag.trim();
+                            }}
+                            onBlur={() => setTagIndex(undefined)}
                             className={`selectedTag w-fit max-w-[400px] h-8 px-2 rounded-[4px] flex items-center gap-2.5 text-sm cursor-default focus:border-2 focus:border-zSecondary-400 hover:scale-105 ${
                                 theme === 'dark' ? 'bg-zDark-5' : 'bg-zGray-300'
                             } ${selectedTagClassName}`}
@@ -100,18 +113,25 @@ const SelectedTagsList = ({
                                 onClick={() => {
                                     if (mode === 'array-of-string') setContentEditable(true);
                                     setTagIndex(index);
-                                    editedTextRef.current = tag;
+                                    editedTextRef.current = tag.trim();
                                 }}
                                 onKeyDown={selectedTagsKeyDown}
                                 onInput={(e) => {
                                     e.preventDefault();
-                                    if (e.currentTarget.textContent) {
-                                        editedTextRef.current = e.currentTarget.textContent;
+                                    if (e.currentTarget.textContent?.trim()) {
+                                        if (e.currentTarget.textContent?.trim() === tag.trim()) {
+                                            editedTextRef.current = tag.trim();
+                                        } else {
+                                            editedTextRef.current = e.currentTarget.textContent;
+                                        }
+                                    } else {
+                                        editedTextRef.current = '';
                                     }
+                                    console.log(editedTextRef.current);
                                 }}
                                 onFocus={() => {
                                     setTagIndex(index);
-                                    editedTextRef.current = tag;
+                                    editedTextRef.current = tag.trim();
                                 }}
                                 onBlur={() => {
                                     if (tagIndex !== undefined) {
@@ -139,12 +159,12 @@ const SelectedTagsList = ({
                                             ),
                                         ]);
                                     }
-
                                     setTagIndex(undefined);
+                                    setContentEditable(false);
                                 }}
                                 className={`flex items-center text-[13px] outline-none truncate cursor-text`}
                             >
-                                {tag}
+                                {tag.trim()}
                             </p>
                             <CloseIcon
                                 className={`w-3 h-auto shrink-0 stroke-black cursor-pointer hover:scale-125 transition-all ease-in-out hover:stroke-red-600 ${selectedTagCloseIconClass}`}
