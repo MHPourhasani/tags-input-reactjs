@@ -20,6 +20,7 @@ const SelectedTagsList = ({
     inputClassName,
     inputFocus,
     setInputFocus,
+    closeIcon,
 }: SelectedTagsListProps) => {
     const [contentEditable, setContentEditable] = useState(false);
     const [tagIndex, setTagIndex] = useState<number | undefined>();
@@ -166,13 +167,29 @@ const SelectedTagsList = ({
                             >
                                 {tag.trim()}
                             </p>
-                            <CloseIcon
-                                className={`w-3 h-auto shrink-0 stroke-black cursor-pointer hover:scale-125 transition-all ease-in-out hover:stroke-red-600 ${selectedTagCloseIconClass}`}
-                                onClick={() => {
-                                    setSelectedTags(selectedTags.filter((selectTag: string) => selectTag !== tag).slice(0, maxTags));
-                                    onChange?.(selectedTags.filter((selectTag: string) => selectTag !== tag).slice(0, maxTags));
-                                }}
-                            />
+
+                            {closeIcon ? (
+                                <img
+                                    src={closeIcon}
+                                    alt="close icon"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        setSelectedTags(selectedTags.filter((selectTag: string) => selectTag !== tag).slice(0, maxTags));
+                                        onChange?.(selectedTags.filter((selectTag: string) => selectTag !== tag).slice(0, maxTags));
+                                    }}
+                                />
+                            ) : (
+                                <CloseIcon
+                                    className={`w-3 h-auto shrink-0 stroke-black cursor-pointer hover:scale-125 transition-all ease-in-out hover:stroke-red-600 ${selectedTagCloseIconClass}`}
+                                    onClick={(e: any) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        setSelectedTags(selectedTags.filter((selectTag: string) => selectTag !== tag).slice(0, maxTags));
+                                        onChange?.(selectedTags.filter((selectTag: string) => selectTag !== tag).slice(0, maxTags));
+                                    }}
+                                />
+                            )}
                         </span>
                     ))}
             </div>

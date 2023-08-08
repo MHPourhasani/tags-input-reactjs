@@ -17,4 +17,5 @@ export interface SelectedTagsListProps {
     inputClassName?: string;
     inputFocus: boolean;
     setInputFocus: any;
+    closeIcon?: any;
 }

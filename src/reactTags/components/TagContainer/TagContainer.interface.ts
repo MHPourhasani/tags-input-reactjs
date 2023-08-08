@@ -16,4 +16,5 @@ export interface TagContainerProps {
     selectedTagClassName?: string;
     selectedTagCloseIconClass?: string;
     addToCategoryOnClick?: (a?: any) => any;
+    closeIcon?: any;
 }

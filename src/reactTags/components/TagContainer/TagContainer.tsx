@@ -23,6 +23,7 @@ export default function TagContainer({
     tagsClassName,
     selectedTagClassName,
     selectedTagCloseIconClass,
+    closeIcon,
 }: TagContainerProps) {
     const [userTheme, setUserTheme] = useState<ThemeType>('light');
     const [inputValue, setInputValue] = useState('');
@@ -269,6 +270,7 @@ export default function TagContainer({
                         inputClassName={inputClassName}
                         inputFocus={inputFocus}
                         setInputFocus={setInputFocus}
+                        closeIcon={closeIcon}
                     />
 
                     {mode === 'advanced-multi-select' && (
