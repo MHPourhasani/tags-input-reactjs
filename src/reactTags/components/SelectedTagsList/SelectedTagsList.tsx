@@ -24,7 +24,6 @@ const SelectedTagsList = ({
     const [contentEditable, setContentEditable] = useState(false);
     const [tagIndex, setTagIndex] = useState<number | undefined>();
     const editedTextRef = useRef<any>();
-    const pRef = useRef<any>();
 
     useEffect(() => {
         if (mode === 'array-of-string') {
@@ -54,9 +53,27 @@ const SelectedTagsList = ({
             setTagIndex(undefined);
         }
 
-        if (e.key === 'Backspace' && editedTextRef.current.length === 1) {
-            console.log(editedTextRef.current);
+        if (e.key === 'Backspace' && editedTextRef.current.length === 1 && tagIndex !== undefined) {
             editedTextRef.current = '';
+
+            if (e.key === 'Enter') {
+                setSelectedTags([
+                    ...new Set(
+                        [...selectedTags.slice(0, tagIndex), (selectedTags[tagIndex] = editedTextRef.current), ...selectedTags.slice(tagIndex + 1)]
+                            .filter((item) => item.length)
+                            .slice(0, maxTags),
+                    ),
+                ]);
+
+                onChange?.([
+                    ...new Set(
+                        [...selectedTags.slice(0, tagIndex), (selectedTags[tagIndex] = editedTextRef.current), ...selectedTags.slice(tagIndex + 1)]
+                            .filter((item) => item.length)
+                            .slice(0, maxTags),
+                    ),
+                ]);
+                setTagIndex(undefined);
+            }
         }
     };
 
@@ -79,7 +96,6 @@ const SelectedTagsList = ({
                         >
                             <p
                                 dir="auto"
-                                ref={pRef}
                                 contentEditable={contentEditable}
                                 onClick={() => {
                                     if (mode === 'array-of-string') setContentEditable(true);
@@ -123,8 +139,10 @@ const SelectedTagsList = ({
                                             ),
                                         ]);
                                     }
+
+                                    setTagIndex(undefined);
                                 }}
-                                className={`flex items-center text-[13px] outline-none truncate ${contentEditable && 'cursor-text'}`}
+                                className={`flex items-center text-[13px] outline-none truncate cursor-text`}
                             >
                                 {tag}
                             </p>
