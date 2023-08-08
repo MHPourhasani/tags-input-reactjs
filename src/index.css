@@ -2,25 +2,24 @@
 @tailwind components;
 
 @font-face {
-  font-family: iranyekan;
-  font-style: normal;
-  font-weight: normal;
-  src: url("./reactTags/assets/fonts/IRANYekanMobileRegular.woff")
-    format("woff");
+    font-family: iranyekan;
+    font-style: normal;
+    font-weight: normal;
+    src: url('./reactTags/assets/fonts/IRANYekanMobileRegular.ttf') format('truetype');
 }
 
 @font-face {
-	font-family: iranyekan;
-	font-style: normal;
-	font-weight: 300;
-	src: url('./reactTags/assets/fonts/IRANYekanMobileLight.woff') format('woff'),
+    font-family: iranyekan;
+    font-style: normal;
+    font-weight: 300;
+    src: url('./reactTags/assets/fonts/IRANYekanMobileLight.ttf') format('truetype');
 }
 
 @font-face {
-	font-family: iranyekan;
-	font-style: normal;
-	font-weight: 500;
-	src: url('./reactTags/assets/fonts/IRANYekanMobileMedium.woff') format('woff'), 
+    font-family: iranyekan;
+    font-style: normal;
+    font-weight: 500;
+    src: url('./reactTags/assets/fonts/IRANYekanMobileMedium.ttf') format('truetype');
 }
 
 @tailwind utilities;
@@ -43,7 +42,7 @@
 }
 
 ::-webkit-scrollbar-thumb {
-    background: #ACB3BF;
+    background: #acb3bf;
     border-radius: 5px;
 }
 
