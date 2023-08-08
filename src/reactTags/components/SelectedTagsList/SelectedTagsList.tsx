@@ -104,7 +104,7 @@ const SelectedTagsList = ({
                                 editedTextRef.current = tag.trim();
                             }}
                             onBlur={() => setTagIndex(undefined)}
-                            className={`selectedTag w-fit max-w-[400px] h-8 px-2 rounded-[4px] flex items-center gap-2.5 text-sm cursor-default focus:border-2 focus:border-zSecondary-400 hover:scale-105 ${
+                            className={`selectedTag w-fit max-w-[400px] h-8 px-2 rounded-[4px] flex items-center gap-2.5 cursor-default focus:border-2 focus:border-zSecondary-400 hover:scale-105 ${
                                 theme === 'dark' ? 'bg-zDark-5' : 'bg-zGray-300'
                             } ${selectedTagClassName}`}
                         >
@@ -163,7 +163,7 @@ const SelectedTagsList = ({
                                     setTagIndex(undefined);
                                     setContentEditable(false);
                                 }}
-                                className={`flex items-center text-[13px] outline-none truncate cursor-text`}
+                                className={`flex items-center text- outline-none truncate cursor-text`}
                             >
                                 {tag.trim()}
                             </p>
