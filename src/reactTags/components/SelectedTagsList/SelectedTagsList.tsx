@@ -88,7 +88,7 @@ const SelectedTagsList = ({
 
     return (
         <div className="w-full flex flex-wrap gap-2 ml-3">
-            <div id="selectedTags" className="flex items-center gap-2">
+            <div id="selectedTags" className="flex items-center flex-wrap gap-2">
                 {selectedTags &&
                     !!selectedTags.length &&
                     selectedTags.map((tag: string, index) => (
@@ -169,16 +169,7 @@ const SelectedTagsList = ({
                             </p>
 
                             {closeIcon ? (
-                                <img
-                                    src={closeIcon}
-                                    alt="close icon"
-                                    onClick={(e) => {
-                                        e.preventDefault();
-                                        e.stopPropagation();
-                                        setSelectedTags(selectedTags.filter((selectTag: string) => selectTag !== tag).slice(0, maxTags));
-                                        onChange?.(selectedTags.filter((selectTag: string) => selectTag !== tag).slice(0, maxTags));
-                                    }}
-                                />
+                                closeIcon
                             ) : (
                                 <CloseIcon
                                     className={`w-3 h-auto shrink-0 stroke-black cursor-pointer hover:scale-125 transition-all ease-in-out hover:stroke-red-600 ${selectedTagCloseIconClass}`}
