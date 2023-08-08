@@ -31,6 +31,7 @@ yarn add tags-input-reactjs
 | 13  | tagsClassName              | string                                                        |                                       | optional  |
 | 14  | selectedTagClassName       | string                                                        |                                       | optional  |
 | 15  | selectedTagCloseIconClass  | string                                                        |                                       | optional  |
+| 16  | closeIcon                  | component                                                     |                                       | optional  |
 
 ## Simple Usage
 
@@ -50,12 +51,9 @@ import 'tags-input-reactjs/styles.css';
 ```
 
 ```jsx
-import { useState } from 'react';
 import ReactTags from 'tags-input-reactjs';
 
 const App = () => {
-    const [tags, setTags] = useState(['apple', 'orange', 'banana']);
-
     return (
         <div>
             <ReactTags mode="array-of-string" />
@@ -91,12 +89,13 @@ const App = () => {
         <div>
             <ReactTags
                 mode="advanced-multi-select"
+                title="My Tags"
                 maxTags={5}
+                theme="dark"
                 defaultSelectedTags={tags}
                 onChange={(tags) => setTags(tags)}
                 categoriesTags={categoriesTags}
-                title="تگ"
-                addToCategoryOnClick={(value) => setCategoriesTags([...abc, value])}
+                addToCategoryOnClick={(value) => setCategoriesTags([...categoriesTags, value])}
             />
         </div>
     );
