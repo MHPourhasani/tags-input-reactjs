@@ -250,6 +250,7 @@ export default function TagContainer({
                 <div
                     id="tags"
                     onMouseDown={tagsMouseDown}
+                    contentEditable={false}
                     className={`relative w-full max-w-full min-h-[3.5rem] h-fit flex items-start gap-2 mt-2 p-2.5 rounded-[0.625rem] border-zSecondary-100 border ${
                         userTheme === 'dark' ? 'bg-bg-dark' : 'bg-white'
                     } ${tagsClassName}`}
