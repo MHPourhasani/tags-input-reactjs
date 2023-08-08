@@ -33,8 +33,7 @@
         "web-vitals": "^2.1.4"
     },
     "scripts": {
-        "build": "rollup -c",
-        "build:css": "postcss src/index.css -o ./tags-input-reactjs"
+        "build": "rollup -c"
     },
     "repository": {
         "type": "git",
