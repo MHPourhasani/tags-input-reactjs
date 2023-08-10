@@ -20,11 +20,11 @@ const SelectedTagsList = ({
     inputClassName,
     inputFocus,
     setInputFocus,
-    closeIcon,
 }: SelectedTagsListProps) => {
     const [contentEditable, setContentEditable] = useState(false);
     const [tagIndex, setTagIndex] = useState<number | undefined>();
     const editedTextRef = useRef<any>();
+    const pRef = useRef<any>();
 
     useEffect(() => {
         if (mode === 'array-of-string') {
@@ -38,7 +38,11 @@ const SelectedTagsList = ({
 
             setSelectedTags([
                 ...new Set(
-                    [...selectedTags.slice(0, tagIndex), (selectedTags[tagIndex] = editedTextRef.current.trim()), ...selectedTags.slice(tagIndex + 1)]
+                    [
+                        ...selectedTags.slice(0, tagIndex),
+                        (selectedTags[tagIndex] = editedTextRef.current.trimEnd()),
+                        ...selectedTags.slice(tagIndex + 1),
+                    ]
                         .filter((item) => item.length)
                         .slice(0, maxTags),
                 ),
@@ -46,7 +50,11 @@ const SelectedTagsList = ({
 
             onChange?.([
                 ...new Set(
-                    [...selectedTags.slice(0, tagIndex), (selectedTags[tagIndex] = editedTextRef.current.trim()), ...selectedTags.slice(tagIndex + 1)]
+                    [
+                        ...selectedTags.slice(0, tagIndex),
+                        (selectedTags[tagIndex] = editedTextRef.current.trimEnd()),
+                        ...selectedTags.slice(tagIndex + 1),
+                    ]
                         .filter((item) => item.length)
                         .slice(0, maxTags),
                 ),
@@ -54,134 +62,90 @@ const SelectedTagsList = ({
             setTagIndex(undefined);
         }
 
-        if (e.key === 'Backspace' && editedTextRef.current.length === 1 && tagIndex !== undefined) {
+        if (e.key === 'Backspace' && editedTextRef.current.length === 1) {
+            console.log(editedTextRef.current);
             editedTextRef.current = '';
-
-            if (e.key === 'Enter') {
-                setSelectedTags([
-                    ...new Set(
-                        [
-                            ...selectedTags.slice(0, tagIndex),
-                            (selectedTags[tagIndex] = editedTextRef.current.trim()),
-                            ...selectedTags.slice(tagIndex + 1),
-                        ]
-                            .filter((item) => item.length)
-                            .slice(0, maxTags),
-                    ),
-                ]);
-
-                onChange?.([
-                    ...new Set(
-                        [
-                            ...selectedTags.slice(0, tagIndex),
-                            (selectedTags[tagIndex] = editedTextRef.current.trim()),
-                            ...selectedTags.slice(tagIndex + 1),
-                        ]
-                            .filter((item) => item.length)
-                            .slice(0, maxTags),
-                    ),
-                ]);
-                setTagIndex(undefined);
-            }
         }
     };
 
     return (
         <div className="w-full flex flex-wrap gap-2 ml-3">
-            {selectedTags &&
-                !!selectedTags.length &&
-                selectedTags.map((tag: string, index) => (
-                    <span
-                        title={tag}
-                        key={tag}
-                        onClick={() => {
-                            if (mode === 'array-of-string') setContentEditable(true);
-                            setTagIndex(index);
-                        }}
-                        onFocus={() => {
-                            setTagIndex(index);
-                            editedTextRef.current = tag.trim();
-                        }}
-                        onBlur={() => setTagIndex(undefined)}
-                        className={`selectedTag w-fit max-w-[400px] h-8 px-2 rounded-[4px] flex items-center gap-2.5 cursor-default focus:border-2 focus:border-zSecondary-400 hover:scale-105 ${
-                            theme === 'dark' ? 'bg-zDark-5' : 'bg-zGray-300'
-                        } ${selectedTagClassName}`}
-                    >
-                        <p
-                            dir="auto"
-                            contentEditable={contentEditable}
+            <div id="selectedTags" className="flex items-center gap-2">
+                {selectedTags &&
+                    !!selectedTags.length &&
+                    selectedTags.map((tag: string, index) => (
+                        <span
+                            title={tag}
+                            key={tag}
                             onClick={() => {
                                 if (mode === 'array-of-string') setContentEditable(true);
                                 setTagIndex(index);
-                                editedTextRef.current = tag.trim();
                             }}
-                            onKeyDown={selectedTagsKeyDown}
-                            onInput={(e) => {
-                                e.preventDefault();
-                                if (e.currentTarget.textContent?.trim()) {
-                                    if (e.currentTarget.textContent?.trim() === tag.trim()) {
-                                        editedTextRef.current = tag.trim();
-                                    } else {
+                            className={`selectedTag w-fit max-w-[400px] h-8 px-2 rounded-[4px] flex items-center gap-2.5 text-sm cursor-default focus:border-2 focus:border-zSecondary-400 hover:scale-105 ${
+                                theme === 'dark' ? 'bg-zDark-5' : 'bg-zGray-300'
+                            } ${selectedTagClassName}`}
+                        >
+                            <p
+                                dir="auto"
+                                ref={pRef}
+                                contentEditable={contentEditable}
+                                onClick={() => {
+                                    if (mode === 'array-of-string') setContentEditable(true);
+                                    setTagIndex(index);
+                                    editedTextRef.current = tag;
+                                }}
+                                onKeyDown={selectedTagsKeyDown}
+                                onInput={(e) => {
+                                    e.preventDefault();
+                                    if (e.currentTarget.textContent) {
                                         editedTextRef.current = e.currentTarget.textContent;
                                     }
-                                } else {
-                                    editedTextRef.current = '';
-                                }
-                                console.log(editedTextRef.current);
-                            }}
-                            onFocus={() => {
-                                setTagIndex(index);
-                                editedTextRef.current = tag.trim();
-                            }}
-                            onBlur={() => {
-                                if (tagIndex !== undefined) {
-                                    setSelectedTags([
-                                        ...new Set(
-                                            [
-                                                ...selectedTags.slice(0, tagIndex),
-                                                (selectedTags[index] = editedTextRef.current.trim()),
-                                                ...selectedTags.slice(tagIndex + 1),
-                                            ]
-                                                .filter((item) => item.length)
-                                                .slice(0, maxTags),
-                                        ),
-                                    ]);
+                                }}
+                                onFocus={() => {
+                                    setTagIndex(index);
+                                    editedTextRef.current = tag;
+                                }}
+                                onBlur={() => {
+                                    if (tagIndex !== undefined) {
+                                        setSelectedTags([
+                                            ...new Set(
+                                                [
+                                                    ...selectedTags.slice(0, tagIndex),
+                                                    (selectedTags[index] = editedTextRef.current.trimEnd()),
+                                                    ...selectedTags.slice(tagIndex + 1),
+                                                ]
+                                                    .filter((item) => item.length)
+                                                    .slice(0, maxTags),
+                                            ),
+                                        ]);
 
-                                    onChange?.([
-                                        ...new Set(
-                                            [
-                                                ...selectedTags.slice(0, tagIndex),
-                                                (selectedTags[index] = editedTextRef.current.trim()),
-                                                ...selectedTags.slice(tagIndex + 1),
-                                            ]
-                                                .filter((item) => item.length)
-                                                .slice(0, maxTags),
-                                        ),
-                                    ]);
-                                }
-                                setTagIndex(undefined);
-                                setContentEditable(false);
-                            }}
-                            className={`flex items-center text- outline-none truncate cursor-text`}
-                        >
-                            {tag.trim()}
-                        </p>
-
-                        {closeIcon ? (
-                            closeIcon
-                        ) : (
+                                        onChange?.([
+                                            ...new Set(
+                                                [
+                                                    ...selectedTags.slice(0, tagIndex),
+                                                    (selectedTags[index] = editedTextRef.current.trimEnd()),
+                                                    ...selectedTags.slice(tagIndex + 1),
+                                                ]
+                                                    .filter((item) => item.length)
+                                                    .slice(0, maxTags),
+                                            ),
+                                        ]);
+                                    }
+                                }}
+                                className={`flex items-center text-[13px] outline-none truncate ${contentEditable && 'cursor-text'}`}
+                            >
+                                {tag}
+                            </p>
                             <CloseIcon
                                 className={`w-3 h-auto shrink-0 stroke-black cursor-pointer hover:scale-125 transition-all ease-in-out hover:stroke-red-600 ${selectedTagCloseIconClass}`}
-                                onClick={(e: any) => {
-                                    e.preventDefault();
-                                    e.stopPropagation();
+                                onClick={() => {
                                     setSelectedTags(selectedTags.filter((selectTag: string) => selectTag !== tag).slice(0, maxTags));
                                     onChange?.(selectedTags.filter((selectTag: string) => selectTag !== tag).slice(0, maxTags));
                                 }}
                             />
-                        )}
-                    </span>
-                ))}
+                        </span>
+                    ))}
+            </div>
 
             <Input
                 theme={theme}
